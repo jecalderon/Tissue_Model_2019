@@ -29,6 +29,7 @@
  *  Written by Ting based on Steve's mcsub.c., 2010.
  *      Use Ting's FindVoxelFace().
  *	Use Steve's FindVoxelFace(), Dec. 30, 2010.
+ *  Debugged by Oghenefejiro Theodore Abohweyere for Visual Studio 2017
  *  Reorganized by Steve. May 8, 2012:
  *      Reads input files, outputs binary files.
  **********/
@@ -142,7 +143,12 @@ int main(int argc, const char * argv[]) {
     FILE*	fid=NULL;               // file ID pointer 
     char    buf[32];                // buffer for reading header.dat
     
-    strcpy(myname, argv[1]);    // acquire name from argument of function call by user.
+	if (argc > 1) {
+		strcpy(myname, argv[1]);    // acquire name from argument of function call by user.
+	}
+	else {
+		strcpy(myname, "skinvessel");
+	}
     printf("name = %s\n",myname);
     
 	/**** INPUT FILES *****/
