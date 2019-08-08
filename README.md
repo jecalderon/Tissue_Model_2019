@@ -6,4 +6,4 @@ The original code was developen in ANSI C.  This effort allows for fast installa
 
 Debugged by additional collaborator, Oghenefejiro Theodore Abohweyere of Durham College, Canada. email: oghenefejiro.abohweyere@dcmail.ca, rulecoconuts@gmail.com
 
-Fix by Oghenefejiro: added an if statement to handle absence of arguments by setting variable 'myname' to a default value.
+Fix by Oghenefejiro: added an if statement to handle absence of arguments by setting variable 'myname' to "skinvessel" by default.
