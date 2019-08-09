@@ -103,7 +103,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="mcxyz.c" />
+    <ClCompile Include="mcxyz.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="skinvessel_F.bin" />
