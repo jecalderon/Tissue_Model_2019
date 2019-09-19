@@ -38,9 +38,9 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
                         % 0 = don't save. Just check the program.
 
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
-time_min    = 10;      	% time duration of the simulation [min] <----- run time -----
+time_min    = 5;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
 nm          = 532;   	% desired wavelength of simulation
-Nbins       = 200;    	% # of bins in each dimension of cube 
+Nbins       = 200;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
 
 % Set Monte Carlo launch flags

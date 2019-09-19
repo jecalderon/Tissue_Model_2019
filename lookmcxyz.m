@@ -227,7 +227,7 @@ Fzx = reshape(F(Ny/2,:,:),Nx,Nz)'; % in z,x plane through source
 mua = muav(reshape(T(Ny/2,:,:),Nx,Nz)');
 Azx = Fzx.*mua;
 
-figure(2);clf
+figure(4);clf
 imagesc(x,z,log10(Azx))
 hold on
 text(max(x)*1.2,min(z)-0.04*max(z),'log_{10}( A )','fontsize',fz)

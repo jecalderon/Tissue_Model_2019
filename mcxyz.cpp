@@ -32,7 +32,11 @@
  *  Debugged by Oghenefejiro Theodore Abohweyere for Visual Studio 2017
  *  Reorganized by Steve. May 8, 2012:
  *      Reads input files, outputs binary files.
- **********/
+ *	August 2019  Debugged by Oghenefejiro Theodore Abohweyere for Visual Studio 2017
+ *
+ *	September 19, 2919  Add teh Gausian irradiation profiles  line 400 
+ *
+ *********/
 
 #include <math.h>
 #include <stdio.h>
@@ -392,6 +396,22 @@ int main(int argc, const char * argv[]) {
 				ux		= -(x - xfocus)/temp;
 				uy		= -(y - yfocus)/temp;
 				uz		= sqrt(1 - ux*ux - uy*uy);
+			}
+			else if (mcflag == 1) { // Gausian pt source radius and waist
+				costheta = 1.0 - 2.0*RandomGen(1, 0, NULL);
+				sintheta = sqrt(1.0 - costheta * costheta);
+				psi = 2.0*PI*RandomGen(1, 0, NULL);
+				cospsi = cos(psi);
+				if (psi < PI)
+					sinpsi = sqrt(1.0 - cospsi * cospsi);
+				else
+					sinpsi = -sqrt(1.0 - cospsi * cospsi);
+				x = xs;
+				y = ys;
+				z = zs;
+				ux = sintheta * cospsi;
+				uy = sintheta * sinpsi;
+				uz = costheta;
 			}
 			else if (mcflag==2) { // isotropic pt source
 				costheta = 1.0 - 2.0*RandomGen(1,0,NULL);
