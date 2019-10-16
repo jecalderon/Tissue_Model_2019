@@ -34,7 +34,7 @@
  *      Reads input files, outputs binary files.
  *	August 2019  Debugged by Oghenefejiro Theodore Abohweyere for Visual Studio 2017
  *
- *	September 19, 2919  Add teh Gausian irradiation profiles  line 400
+ *	September 19, 2019  Add the Gausian irradiation profiles  line 400
  *
  *********/
 
