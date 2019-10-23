@@ -115,6 +115,14 @@ xmin = min(x);
 xmax = max(x);
 xdiff = xmax-xmin;
 
+
+
+%%
+[Xii,Yii,Zii] = ndgrid(1:size(T,1) , 1:size(T ,2) , 1:size(T,3));
+pointsize = 2;
+figure(10);scatter3(Xii(:) , Yii(:) , Zii(:), pointsize , log10(F(:)));  
+
+%figure (11); surf(Yii , Xii , Zii);
 %% Look at structure, Tzx
 Tzx = reshape(T(Ny/2,:,:),Nx,Nz)';
 tissue = makeTissueList(nm);
@@ -163,6 +171,13 @@ switch mcflag
             xx = -radius + 2*radius*i/N;
             plot([xx xx],[zs zz],'r-')
         end
+        
+        case 4 % SFDI
+        zz = max(z);
+        for i=0:N
+            xx = -radius + 2*radius*i/N;
+            plot([xx xx],[zs zz],'r-')
+        end
 end
 axis equal image
 
@@ -201,7 +216,7 @@ Fzy = reshape(F(:,Nx/2,:),Ny,Nz)';
 iy = round((dy*Ny/2 + 0.15)/dy);
 iz = round(zs/dz);
 zzs  = zs;
-%Fdet = mean(reshape(Fzy(iz+[-1:1],iy+[0 1]),6,1));
+%Fdet = mean(reshape( Fzy(iz+[-1:1],iy+[0 1]),6,1));
 
 figure(3);clf
 imagesc(y,z,log10(Fzy),[.5 2.8])
@@ -222,9 +237,37 @@ if SAVEPICSON
     savepic(3,[4 3],name)
 end
 
+
+%% look Fyx at skin top layer
+Fyx = reshape(F(:,:,30),Nx,Ny)';
+disp(Nz/2);
+ix = round((dx*Nx/2 + 0.15)/dx);
+iy = round(ys/dy);
+yys  = ys;
+%Fdet = mean(reshape( Fzy(iz+[-1:1],iy+[0 1]),6,1));
+
+figure(5);clf
+imagesc(x,y,log10(Fyx),[.5 2.8])
+hold on
+text(max(z)*1.2,min(y)-0.04*max(y),'log_{10}( \phi )','fontsize',fz)
+colorbar
+set(gca,'fontsize',sz)
+xlabel('x [cm]')
+ylabel('y [cm]')
+title('Fluence \phi [W/cm^2/W.delivered] ','fontweight','normal','fontsize',fz)
+colormap(makec2f)
+axis equal image
+text(min(z)-0.2*max(z),min(y)-0.08*max(y),sprintf('runtime = %0.1f min',time_min),...
+    'fontsize',fz2)
+
+if SAVEPICSON
+    name = sprintf('%s_Fyx.jpg',myname);
+    savepic(3,[4 3],name)
+end
+
 %% look Azx
 Fzx = reshape(F(Ny/2,:,:),Nx,Nz)'; % in z,x plane through source
-mua = muav(reshape(T(Ny/2,:,:),Nx,Nz)');
+mua = muav(reshape(T(150,:,:),Nx,Nz)');
 Azx = Fzx.*mua;
 
 figure(4);clf
@@ -248,6 +291,9 @@ if SAVEPICSON
 end
 
 drawnow
+
+
+
 
 disp('done')
 
