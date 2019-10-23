@@ -145,92 +145,19 @@ int 	type;
 
 
 int main(int argc, const char * argv[]) {
-<<<<<<< HEAD
-    
-	lineFlag = 1;
 
-    if (argc==0) {
-        printf("assuming you've compiled mcxyz.c as gomcxyz ...\n");
-=======
+	lineFlag = 1;
 
 	if (argc == 0) {
 		printf("assuming you've compiled mcxyz.c as gomcxyz ...\n");
->>>>>>> 1602b6c9d1120955d64dfe8e654eb3e5716c1820
 		printf("USAGE: gomcxyz name\n");
 		printf("which will load the files name_H.mci and name_T.bin\n");
 		printf("and run the Monte Carlo program.\n");
 		printf("Yields  name_F.bin, which holds the fluence rate distribution.\n");
-<<<<<<< HEAD
+
         return 0;
     }
-	
-=======
-		return 0;
-	}
 
-	/* Propagation parameters */
-	double	x, y, z;        /* photon position */
-	double	ux, uy, uz;     /* photon trajectory as cosines */
-	double  uxx, uyy, uzz;	/* temporary values used during SPIN */
-	double	s;              /* step sizes. s = -log(RND)/mus [cm] */
-	double  sleft;          /* dimensionless */
-	double	costheta;       /* cos(theta) */
-	double  sintheta;       /* sin(theta) */
-	double	cospsi;         /* cos(psi) */
-	double  sinpsi;         /* sin(psi) */
-	double	psi;            /* azimuthal angle */
-	long	i_photon;/* current photon */
-	long phodon;
-	double	W;              /* photon weight */
-	double	absorb;         /* weighted deposited in a step due to absorption */
-	short   photon_status;  /* flag = ALIVE=1 or DEAD=0 */
-	Boolean sv;             /* Are they in the same voxel? */
-
-	/* other variables */
-	double	mua;            /* absorption coefficient [cm^-1] */
-	double	mus;            /* scattering coefficient [cm^-1] */
-	double	g;              /* anisotropy [-] */
-	double	Nphotons;       /* number of photons in simulation */
-
-	/* launch parameters */
-	int		mcflag, launchflag, boundaryflag;
-	float	xfocus, yfocus, zfocus;
-	float	ux0, uy0, uz0;
-	float	radius;
-	float	waist;
-
-	/* dummy variables */
-	double  rnd;            /* assigned random value 0-1 */
-	double	r, phi;			/* dummy values */
-	long	i, j, NN;         /* dummy indices */
-	double	tempx, tempy, tempz; /* temporary variables, used during photon step. */
-	int 	ix, iy, iz;     /* Added. Used to track photons */
-	double 	temp;           /* dummy variable */
-	int     bflag;          /* boundary flag:  0 = photon inside volume. 1 = outside volume */
-	int		CNT;
-
-	/* mcxyz bin variables */
-	float	dx, dy, dz;     /* bin size [cm] */
-	int		Nx, Ny, Nz, Nt; /* # of bins */
-	float	xs, ys, zs;		/* launch position */
-
-	/* time */
-	float	time_min;               // Requested time duration of computation.
-	time_t	now;
-	double	start_time, finish_time, temp_time; /* for clock() */
-
-	/* tissue parameters */
-	char	tissuename[50][32];
-	float 	muav[Ntiss];            // muav[0:Ntiss-1], absorption coefficient of ith tissue type
-	float 	musv[Ntiss];            // scattering coeff. 
-	float 	gv[Ntiss];              // anisotropy of scattering
-
-	/* Input/Output */
-	char   	myname[STRLEN];		// Holds the user's choice of myname, used in input and output files. 
-	char	filename[STRLEN];     // temporary filename for writing output.
-	FILE*	fid = NULL;               // file ID pointer 
-	char    buf[32];                // buffer for reading header.dat
->>>>>>> 1602b6c9d1120955d64dfe8e654eb3e5716c1820
 
 	if (argc > 1) {
 		strcpy(myname, argv[1]);    // acquire name from argument of function call by user.
@@ -364,24 +291,14 @@ int main(int argc, const char * argv[]) {
 		fprintf(fid, "gv(%ld) = %0.4f;\n\n", i, gv[i]);
 	}
 	fclose(fid);
-<<<<<<< HEAD
+
     
     /* IMPORT BINARY TISSUE FILE */
 
 	NN = Nx*Ny*Nz;
 	v  = ( char *)malloc(NN*sizeof(char));  /* tissue structure */
 	F  = (float *)malloc(NN*sizeof(float));	/* relative fluence rate [W/cm^2/W.delivered] */
-=======
 
-	/* IMPORT BINARY TISSUE FILE */
-	char 	*v = NULL;
-	float 	*F = NULL;
-	float	*R = NULL;
-	int 	type;
-	NN = Nx * Ny*Nz;
-	v = (char *)malloc(NN * sizeof(char));  /* tissue structure */
-	F = (float *)malloc(NN * sizeof(float));	/* relative fluence rate [W/cm^2/W.delivered] */
->>>>>>> 1602b6c9d1120955d64dfe8e654eb3e5716c1820
 	// NOT READY: R  = (float *)malloc(NN*sizeof(float));	/* escaping flux [W/cm^2/W.delivered] */
 
 	// read binary file
@@ -417,376 +334,23 @@ int main(int argc, const char * argv[]) {
 	 Launch N photons, initializing each one before progation.
 	 *****/
 	printf("------------- Begin Monte Carlo -------------\n");
-<<<<<<< HEAD
+
     printf("%s\n",myname);
     printf("requesting %0.1f min\n",time_min);
 	
 	Nphotons = 1000; // will be updated to achieve desired run time, time_min.
-=======
-	printf("%s\n", myname);
 
-
-	printf("requesting %0.1f min\n", time_min);
-	Nphotons = 1300; // will be updated to achieve desired run time, time_min.
->>>>>>> 1602b6c9d1120955d64dfe8e654eb3e5716c1820
 	i_photon = 0;
-	phodon = 0;
+	
 	float numCircles = 0.12 / .001;
 	float per = 0;
 	CNT = 0;
-<<<<<<< HEAD
+
 
 
 	drawLine(0.05, 0.001, 0.005);
 	drawLine(-0.05, 0.001, 0.005);
 	
-=======
-	for (ys = -0.06; ys < 0.06; ys += 0.001) {
-
-		//	printf("=++++++++++++++++++++=========== YS = %f +++++++++++++++============", ys);
-		i_photon = 0;
-		do {
-			/**** LAUNCH
-			 Initialize photon position and trajectory.
-			 *****/
-			 //if (fmod(i_photon,10)==0) printf("photon %ld took %d steps\n",i_photon,CNT);
-			phodon += 1;
-			i_photon += 1;/* increment photon count */
-			W = 1.0;                    /* set photon weight to one */
-			photon_status = ALIVE;      /* Launch an ALIVE photon */
-			CNT = 0;
-
-			// Print out message about progress.
-			/*
-			if ((i_photon > 1000) & (fmod(i_photon, (int)(Nphotons / 100)) == 0)) {
-				temp = i_photon / Nphotons * 100;
-				//printf("%0.1f%% \t\tfmod = %0.3f\n", temp,fmod(temp, 10.0));
-				if ((temp < 10) | (temp > 90)) {
-					printf("%0.0f%% done\n", i_photon / Nphotons * 100);
-				}
-				else if (fmod(temp, 10.0) > 9)
-					printf("%0.0f%% done\n", i_photon / Nphotons * 100);
-			}
-
-			// At 1000th photon, update Nphotons to achieve desired runtime (time_min)
-			if (i_photon == 1)
-				temp_time = clock();
-			if (i_photon == 1000) {
-				finish_time = clock();
-				Nphotons = (long)(time_min * 60 * 999 * CLOCKS_PER_SEC / (finish_time - temp_time));
-				printf("Nphotons = %0.0f for simulation time = %0.2f min , with mcflag at %d\n", Nphotons, time_min, mcflag);
-			}
-*/
-			per = phodon / (Nphotons*numCircles);
-			if (((int)(per * 1000000000)) % 15 == 0) { printf("Progress  %f \n", per * 100); }
-
-			/**** SET SOURCE
-			 * Launch collimated beam at x,y center.
-			 ****/
-
-			 /****************************/
-			 /* Initial position. */
-
-			 /* trajectory */
-			if (launchflag == 1) { // manually set launch
-				x = xs;
-				y = ys;
-				z = zs;
-				ux = ux0;
-				uy = uy0;
-				uz = uz0;
-			}
-			else { // use mcflag
-				if (mcflag == 0) { // uniform beam
-					// set launch point and width of beam
-					while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
-					r = radius * sqrt(rnd); // radius of beam at launch point
-					while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
-					phi = rnd * 2.0*PI;
-					x = xs + r * cos(phi);
-					y = ys + r * sin(phi);
-					z = zs;
-					// set trajectory toward focus
-					while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
-					r = waist * sqrt(rnd); // radius of beam at focus
-					while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
-					phi = rnd * 2.0*PI;
-					xfocus = r * cos(phi);
-					yfocus = r * sin(phi);
-					temp = sqrt((x - xfocus)*(x - xfocus) + (y - yfocus)*(y - yfocus) + zfocus * zfocus);
-					ux = -(x - xfocus) / temp;
-					uy = -(y - yfocus) / temp;
-					uz = sqrt(1 - ux * ux - uy * uy);
-				}
-				else if (mcflag == 1) { // Gausian pt source radius and waist
-					costheta = 1.0 - 2.0*RandomGen(1, 0, NULL);
-					sintheta = sqrt(2.0 - costheta * costheta);// Represent an elliptical focus
-					psi = 2.0*PI*RandomGen(1, 0, NULL);
-					cospsi = cos(psi);
-					if (psi < PI)
-						sinpsi = sqrt(1.0 - cospsi * cospsi);
-					else
-						sinpsi = -sqrt(1.0 - cospsi * cospsi);
-					x = xs;
-					y = ys;
-					z = zs;
-					ux = sintheta * cospsi;
-					uy = sintheta * sinpsi;
-					uz = costheta;
-				}
-				else if (mcflag == 2) { // isotropic pt source
-					costheta = 1.0 - 2.0*RandomGen(1, 0, NULL);
-					sintheta = sqrt(1.0 - costheta * costheta);
-					psi = 2.0*PI*RandomGen(1, 0, NULL);
-					cospsi = cos(psi);
-					if (psi < PI)
-						sinpsi = sqrt(1.0 - cospsi * cospsi);
-					else
-						sinpsi = -sqrt(1.0 - cospsi * cospsi);
-					x = xs;
-					y = ys;
-					z = zs;
-					ux = sintheta * cospsi;
-					uy = sintheta * sinpsi;
-					uz = costheta;
-				}
-				else if (mcflag == 3) { // rectangular source collimated
-					while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
-					x = radius * (rnd * 2 - 1); // use radius to specify x-halfwidth of rectangle
-					while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
-					y = radius * (rnd * 2 - 1); // use radius to specify y-halfwidth of rectangle
-					z = zs;
-					ux = 0.0;
-					uy = 0.0;
-					uz = 1.0; // collimated beam
-				}
-				else if (mcflag == 4) { // SFDI profiling 
-					while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
-					x = radius * (rnd * 2 - 1); // use radius to specify x-halfwidth of rectangle
-					while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
-					y = radius * (rnd * 2 - 1); // use radius to specify y-halfwidth of rectangle
-					z = zs;
-					ux = 0.0;
-					uy = 0.0;
-					uz = 1.0; // collimated beam
-				}
-				else if (mcflag == 5) {
-					// set launch point and width of beam
-					while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
-					r = radius * sqrt(rnd); // radius of beam at launch point
-					while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
-					phi = rnd * 2.0*PI;
-					x = xs + r * cos(phi);
-					y = ys + r * sin(phi);
-					z = zs;
-					// set trajectory toward focus
-					while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
-					r = waist * sqrt(rnd); // radius of beam at focus
-					while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
-					phi = rnd * 2.0*PI;
-					xfocus = r * cos(phi);
-					yfocus = r * sin(phi);
-					temp = sqrt((x - xfocus)*(x - xfocus) + (y - yfocus)*(y - yfocus) + zfocus * zfocus);
-					ux = -(x - xfocus) / temp;
-					uy = -(y - yfocus) / temp;
-					uz = sqrt(1 - ux * ux - uy * uy);
-				}
-			} // end  use mcflag
-			/****************************/
-
-
-				/* Get tissue voxel properties of launchpoint.
-				 * If photon beyond outer edge of defined voxels,
-				 * the tissue equals properties of outermost voxels.
-				 * Therefore, set outermost voxels to infinite background value.
-				 */
-			ix = (int)(Nx / 2 + x / dx);
-			iy = (int)(Ny / 2 + y / dy);
-			iz = (int)(z / dz);
-			if (ix >= Nx) ix = Nx - 1;
-			if (iy >= Ny) iy = Ny - 1;
-			if (iz >= Nz) iz = Nz - 1;
-			if (ix < 0)   ix = 0;
-			if (iy < 0)   iy = 0;
-			if (iz < 0)   iz = 0;
-			/* Get the tissue type of located voxel */
-			i = (long)(iz*Ny*Nx + ix * Ny + iy);
-			type = v[i];
-			mua = muav[type];
-			mus = musv[type];
-			g = gv[type];
-
-			bflag = 1; // initialize as 1 = inside volume, but later check as photon propagates.
-
-			/* HOP_DROP_SPIN_CHECK
-			 Propagate one photon until it dies as determined by ROULETTE.
-			 *******/
-			do {
-
-				/**** HOP
-				 Take step to new position
-				 s = dimensionless stepsize
-				 x, uy, uz are cosines of current photon trajectory
-				 *****/
-				while ((rnd = RandomNum) <= 0.0);   /* yields 0 < rnd <= 1 */
-				sleft = -log(rnd);				/* dimensionless step */
-				CNT += 1;
-
-				do {  // while sleft>0   
-					s = sleft / mus;				/* Step size [cm].*/
-					tempx = x + s * ux;				/* Update positions. [cm] */
-					tempy = y + s * uy;
-					tempz = z + s * uz;
-
-					sv = SameVoxel(x, y, z, tempx, tempy, tempz, dx, dy, dz);
-					if (sv) /* photon in same voxel */
-					{
-						x = tempx;					/* Update positions. */
-						y = tempy;
-						z = tempz;
-
-						/**** DROP
-						 Drop photon weight (W) into local bin.
-						 *****/
-						absorb = W * (1 - exp(-mua * s));	/* photon weight absorbed at this step */
-						W -= absorb;					/* decrement WEIGHT by amount absorbed */
-						// If photon within volume of heterogeneity, deposit energy in F[]. 
-						// Normalize F[] later, when save output. 
-						if (bflag) F[i] += absorb;	// only save data if blag==1, i.e., photon inside simulation cube
-
-						/* Update sleft */
-						sleft = 0;		/* dimensionless step remaining */
-					}
-					else /* photon has crossed voxel boundary */
-					{
-						/* step to voxel face + "littlest step" so just inside new voxel. */
-						s = ls + FindVoxelFace2(x, y, z, tempx, tempy, tempz, dx, dy, dz, ux, uy, uz);
-
-						/**** DROP
-						 Drop photon weight (W) into local bin.
-						 *****/
-						absorb = W * (1 - exp(-mua * s));   /* photon weight absorbed at this step */
-						W -= absorb;                  /* decrement WEIGHT by amount absorbed */
-						// If photon within volume of heterogeneity, deposit energy in F[]. 
-						// Normalize F[] later, when save output. 
-						if (bflag) F[i] += absorb;
-
-						/* Update sleft */
-						sleft -= s * mus;  /* dimensionless step remaining */
-						if (sleft <= ls) sleft = 0;
-
-						/* Update positions. */
-						x += s * ux;
-						y += s * uy;
-						z += s * uz;
-
-						// pointers to voxel containing optical properties
-						ix = (int)(Nx / 2 + x / dx);
-						iy = (int)(Ny / 2 + y / dy);
-						iz = (int)(z / dz);
-
-						bflag = 1;  // Boundary flag. Initialize as 1 = inside volume, then check.
-						if (boundaryflag == 0) { // Infinite medium.
-									// Check if photon has wandered outside volume.
-									// If so, set tissue type to boundary value, but let photon wander.
-									// Set blag to zero, so DROP does not deposit energy.
-							if (iz >= Nz) { iz = Nz - 1; bflag = 0; }
-							if (ix >= Nx) { ix = Nx - 1; bflag = 0; }
-							if (iy >= Ny) { iy = Ny - 1; bflag = 0; }
-							if (iz < 0) { iz = 0;    bflag = 0; }
-							if (ix < 0) { ix = 0;    bflag = 0; }
-							if (iy < 0) { iy = 0;    bflag = 0; }
-						}
-						else if (boundaryflag == 1) { // Escape at boundaries
-							if (iz >= Nz) { iz = Nz - 1; photon_status = DEAD; sleft = 0; }
-							if (ix >= Nx) { ix = Nx - 1; photon_status = DEAD; sleft = 0; }
-							if (iy >= Ny) { iy = Ny - 1; photon_status = DEAD; sleft = 0; }
-							if (iz < 0) { iz = 0;    photon_status = DEAD; sleft = 0; }
-							if (ix < 0) { ix = 0;    photon_status = DEAD; sleft = 0; }
-							if (iy < 0) { iy = 0;    photon_status = DEAD; sleft = 0; }
-						}
-						else if (boundaryflag == 2) { // Escape at top surface, no x,y bottom z boundaries
-							if (iz >= Nz) { iz = Nz - 1; bflag = 0; }
-							if (ix >= Nx) { ix = Nx - 1; bflag = 0; }
-							if (iy >= Ny) { iy = Ny - 1; bflag = 0; }
-							if (iz < 0) { iz = 0;    photon_status = DEAD; sleft = 0; }
-							if (ix < 0) { ix = 0;    bflag = 0; }
-							if (iy < 0) { iy = 0;    bflag = 0; }
-						}
-
-						// update pointer to tissue type
-						i = (long)(iz*Ny*Nx + ix * Ny + iy);
-						type = v[i];
-						mua = muav[type];
-						mus = musv[type];
-						g = gv[type];
-
-					} //(sv) /* same voxel */
-
-				} while (sleft > 0); //do...while
-
-				/**** SPIN
-				 Scatter photon into new trajectory defined by theta and psi.
-				 Theta is specified by cos(theta), which is determined
-				 based on the Henyey-Greenstein scattering function.
-				 Convert theta and psi into cosines ux, uy, uz.
-				 *****/
-				 /* Sample for costheta */
-				rnd = RandomNum;
-				if (g == 0.0)
-					costheta = 2.0*rnd - 1.0;
-				else {
-					double temp = (1.0 - g * g) / (1.0 - g + 2 * g*rnd);
-					costheta = (1.0 + g * g - temp * temp) / (2.0*g);
-				}
-				sintheta = sqrt(1.0 - costheta * costheta); /* sqrt() is faster than sin(). */
-
-				/* Sample psi. */
-				psi = 2.0*PI*RandomNum;
-				cospsi = cos(psi);
-				if (psi < PI)
-					sinpsi = sqrt(1.0 - cospsi * cospsi);     /* sqrt() is faster than sin(). */
-				else
-					sinpsi = -sqrt(1.0 - cospsi * cospsi);
-
-				/* New trajectory. */
-				if (1 - fabs(uz) <= ONE_MINUS_COSZERO) {      /* close to perpendicular. */
-					uxx = sintheta * cospsi;
-					uyy = sintheta * sinpsi;
-					uzz = costheta * SIGN(uz);   /* SIGN() is faster than division. */
-				}
-				else {					/* usually use this option */
-					temp = sqrt(1.0 - uz * uz);
-					uxx = sintheta * (ux * uz * cospsi - uy * sinpsi) / temp + ux * costheta;
-					uyy = sintheta * (uy * uz * cospsi + ux * sinpsi) / temp + uy * costheta;
-					uzz = -sintheta * cospsi * temp + uz * costheta;
-				}
-
-				/* Update trajectory */
-				ux = uxx;
-				uy = uyy;
-				uz = uzz;
-
-				/**** CHECK ROULETTE
-				 If photon weight below THRESHOLD, then terminate photon using Roulette technique.
-				 Photon has CHANCE probability of having its weight increased by factor of 1/CHANCE,
-				 and 1-CHANCE probability of terminating.
-				 *****/
-				if (W < THRESHOLD) {
-					if (RandomNum <= CHANCE)
-						W /= CHANCE;
-					else photon_status = DEAD;
-				}
-
-			} while (photon_status == ALIVE);  /* end STEP_CHECK_HOP_SPIN */
-			/* if ALIVE, continue propagating */
-			/* If photon DEAD, then launch new photon. */
-
-
-		} while (i_photon < Nphotons);  /* end RUN */
-	}
-
->>>>>>> 1602b6c9d1120955d64dfe8e654eb3e5716c1820
 
 	printf("------------------------------------------------------\n");
 	finish_time = clock();
