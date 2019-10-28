@@ -119,8 +119,8 @@ xdiff = xmax-xmin;
 
 %%
 [Xii,Yii,Zii] = ndgrid(1:size(T,1) , 1:size(T ,2) , 1:size(T,3));
-pointsize = 2;
-figure(10);scatter3(Xii(:) , Yii(:) , Zii(:), pointsize , log10(F(:)));  
+pointsize = 10;
+figure(10);scatter3(Yii(:) , Zii(:) , Xii(:), pointsize , log10(F(:)));  
 
 %figure (11); surf(Yii , Xii , Zii);
 %% Look at structure, Tzx
@@ -267,7 +267,7 @@ end
 
 %% look Azx
 Fzx = reshape(F(Ny/2,:,:),Nx,Nz)'; % in z,x plane through source
-mua = muav(reshape(T(150,:,:),Nx,Nz)');
+mua = muav(reshape(T(35,:,:),Nx,Nz)');
 Azx = Fzx.*mua;
 
 figure(4);clf

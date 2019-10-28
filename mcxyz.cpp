@@ -143,7 +143,8 @@ float* F = NULL;
 float* R = NULL;
 int 	type;
 
-
+void drawLine(float Xpos, float step, float radius);
+void run();
 int main(int argc, const char * argv[]) {
 
 	lineFlag = 1;
@@ -338,7 +339,7 @@ int main(int argc, const char * argv[]) {
     printf("%s\n",myname);
     printf("requesting %0.1f min\n",time_min);
 	
-	Nphotons = 1000; // will be updated to achieve desired run time, time_min.
+	Nphotons = 50000; // will be updated to achieve desired run time, time_min.
 
 	i_photon = 0;
 	
@@ -346,10 +347,8 @@ int main(int argc, const char * argv[]) {
 	float per = 0;
 	CNT = 0;
 
-
-
-	drawLine(0.05, 0.001, 0.005);
-	drawLine(-0.05, 0.001, 0.005);
+	
+	run();
 	
 
 	printf("------------------------------------------------------\n");
@@ -497,31 +496,26 @@ void run() {
 		 Initialize photon position and trajectory.
 		 *****/
 		 //if (fmod(i_photon,10)==0) printf("photon %ld took %d steps\n",i_photon,CNT);
-
+		
 		i_photon += 1;				/* increment photon count */
 		W = 1.0;                    /* set photon weight to one */
 		photon_status = ALIVE;      /* Launch an ALIVE photon */
 		CNT = 0;
 
 		// Print out message about progress.
-		if ((i_photon > 1000)& (fmod(i_photon, (int)(Nphotons / 100)) == 0)) {
-			temp = i_photon / Nphotons * 100;
-			//printf("%0.1f%% \t\tfmod = %0.3f\n", temp,fmod(temp, 10.0));
-			if ((temp < 10) | (temp > 90)) {
-				printf("%0.0f%% done\n", i_photon / Nphotons * 100);
-			}
-			else if (fmod(temp, 10.0) > 9)
-				printf("%0.0f%% done\n", i_photon / Nphotons * 100);
+
+		if (i_photon % 1000 == 0) {
+			printf("progress %0.1f\n", 100 * i_photon / Nphotons);
 		}
 
 		// At 1000th photon, update Nphotons to achieve desired runtime (time_min)
 		if (i_photon == 1)
 			temp_time = clock();
-		if (i_photon == 1000) {
+		if (i_photon == Nphotons) {
 			finish_time = clock();
-			Nphotons = (long)(time_min * 60 * 999 * CLOCKS_PER_SEC / (finish_time - temp_time));
+			//Nphotons = (long)(time_min * 60 * 999 * CLOCKS_PER_SEC / (finish_time - temp_time));
 			printf("Nphotons = %0.0f for simulation time = %0.2f min\n", Nphotons, time_min);
-		}
+		} 
 
 		/**** SET SOURCE
 		 * Launch collimated beam at x,y center.
@@ -541,6 +535,7 @@ void run() {
 		}
 		else { // use mcflag
 			if (mcflag == 0) { // uniform beam
+				if (i_photon == 1)printf("Running laser simulation with %f photons\n", Nphotons);
 				// set launch point and width of beam
 				while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
 				r = radius * sqrt(rnd); // radius of beam at launch point
@@ -562,6 +557,7 @@ void run() {
 				uz = sqrt(1 - ux * ux - uy * uy);
 			}
 			else if (mcflag == 1) { // Gausian pt source radius and waist
+				if (i_photon == 1)printf("Running Gaussian simulation with %f photons\n", Nphotons);
 				costheta = 1.0 - 2.0 * RandomGen(1, 0, NULL);
 				sintheta = sqrt(1.0 - costheta * costheta);
 				psi = 2.0 * PI * RandomGen(1, 0, NULL);
@@ -578,6 +574,7 @@ void run() {
 				uz = costheta;
 			}
 			else if (mcflag == 2) { // isotropic pt source
+				if(i_photon == 1)printf("Running isotropic simulation with %f photons\n", Nphotons);
 				costheta = 1.0 - 2.0 * RandomGen(1, 0, NULL);
 				sintheta = sqrt(1.0 - costheta * costheta);
 				psi = 2.0 * PI * RandomGen(1, 0, NULL);
@@ -603,6 +600,26 @@ void run() {
 				uy = 0.0;
 				uz = 1.0; // collimated beam
 			}
+			else if (mcflag == 4) { // draw one line
+				if (i_photon == 1)printf("Running line simulation with %f photons\n", Nphotons);
+				drawLine(xs, .001, .0008);
+			}
+
+			else if (mcflag == 5) { // draw circle
+				if (i_photon == 1)printf("Running circle simulation with %f photons\n", Nphotons);
+				r = 0.006;
+				while ((rnd = (float)rand()/(float)(RAND_MAX/(2*PI))) <= 0.0); // avoids rnd = 0
+				
+				x = r * cos(rnd);
+				y = r * sin(rnd);
+
+				z = zs;
+				ux = sintheta * cospsi;
+				uy = sintheta * sinpsi;
+				uz = costheta;
+			}
+
+
 		} // end  use mcflag
 		/****************************/
 
@@ -794,11 +811,14 @@ void run() {
 		/* If photon DEAD, then launch new photon. */
 
 	} while (i_photon < Nphotons);  /* end RUN */
+
+	i_photon = 0 ;
 }
 
-void drawLine(float XposLine , int step , float radiusLine) {
+void drawLine(float XposLine , float step , float radiusLine) {
 	xs = XposLine;
 	mcflag = 0;
+	Nphotons = 200;
 	radius = radiusLine;
 	for (ys = -0.06;  ys <= 0.06 ; ys += step)
 		run();
