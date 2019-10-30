@@ -38,9 +38,9 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
                         % 0 = don't save. Just check the program.
 
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
-time_min    = 0.5;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
+time_min    = 10;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
 nm          = 532;   	% desired wavelength of simulation
-Nbins       = 100;    	% # of bins in each dimension of cube Original code Nbins=200
+Nbins       = 250;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
 
 % Set Monte Carlo launch flags
@@ -139,6 +139,22 @@ for iz=1:Nz % for every depth z(iz)
             r  = sqrt(xd^2 + zd^2);	% r from vessel center
             if (r<=vesselradius)     	% if r is within vessel
                 T(:,ix,iz) = 3; % blood
+            end
+
+    end %ix
+    
+    
+    
+     % blood vessel2 @ xc2, zc2, radius2, oriented along y axis
+    xc2      = .05;            % [cm], center of blood vessel 2
+    zc2      = Nz/1.5*dz;     	% [cm], center of blood vessel 2
+    radius2  = 0.001;      	% blood vessel 2 radius [cm]
+    for ix2=1:Nx
+            xd2 = x(ix2) - xc2;	% vessel, x distance from vessel center
+            zd2 = z(iz) - zc2;   	% vessel, z distance from vessel center                
+            r2  = sqrt(xd2^2 + zd2^2);	% r2 from vessel center
+            if (r2<=radius2)     	% if r2 is within vessel
+                T(:,ix2,iz) = 7; % gray matter
             end
 
     end %ix
