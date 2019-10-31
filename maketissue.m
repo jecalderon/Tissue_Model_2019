@@ -38,13 +38,13 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
                         % 0 = don't save. Just check the program.
 
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
-time_min    = 10;      	% time duration of the simulation [min] <----- run time -----
+time_min    = 0.5;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
 nm          = 532;   	% desired wavelength of simulation
-Nbins       = 200;    	% # of bins in each dimension of cube 
+Nbins       = 100;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
 
 % Set Monte Carlo launch flags
-mcflag      = 0;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
+mcflag      = 5;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
                         % 3 = rectangular beam (use xfocus,yfocus for x,y halfwidths)
 launchflag  = 0;        % 0 = let mcxyz.c calculate launch trajectory
                         % 1 = manually set launch vector.
@@ -55,7 +55,7 @@ boundaryflag = 2;       % 0 = no boundaries, 1 = escape at boundaries
 % Sets position of source
 xs          = 0;      	% x of source
 ys          = 0;        % y of source
-zs          = 0.0101;  	% z of source
+zs          = 0;  	% z of source
 
 % Set position of focus, so mcxyz can calculate launch trajectory
 xfocus      = 0;        % set x,position of focus
@@ -63,8 +63,8 @@ yfocus      = 0;        % set y,position of focus
 zfocus      = inf;    	% set z,position of focus (=inf for collimated beam)
 
 % only used if mcflag == 0 or 1 or 3 (not 2=isotropic pt.)
-radius      = 0.0300;   % 1/e radius of beam at tissue surface
-waist       = 0.0300;  	% 1/e radius of beam at focus
+radius      = 0.00300;   % 1/e radius of beam at tissue surface
+waist       = 0.00300;  	% 1/e radius of beam at focus
 
 % only used if launchflag == 1 (manually set launch trajectory):
 ux0         = 0.7;      % trajectory projected onto x axis
@@ -131,8 +131,8 @@ for iz=1:Nz % for every depth z(iz)
 
     % blood vessel @ xc, zc, radius, oriented along y axis
     xc      = 0;            % [cm], center of blood vessel
-    zc      = Nz/2*dz;     	% [cm], center of blood vessel
-    vesselradius  = 0.0100;      	% blood vessel radius [cm]
+    zc      = Nz/1.5*dz;     	% [cm], center of blood vessel
+    vesselradius  = 0.0080;      	% blood vessel radius [cm]
     for ix=1:Nx
             xd = x(ix) - xc;	% vessel, x distance from vessel center
             zd = z(iz) - zc;   	% vessel, z distance from vessel center                
