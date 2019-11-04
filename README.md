@@ -1,4 +1,4 @@
-# Tissue_Model_2019 for Visual Studio Solution Project
+Tissue_Model_2019 for Visual Studio Solution Project
 
 This project debugs and sets configuration of the light transport modeling project created by the Bio Medial Group at Oregon University  https://omlc.org/software/mc/mcxyz/
 

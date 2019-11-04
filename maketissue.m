@@ -42,6 +42,9 @@ time_min    = 0.5;      	% time duration of the simulation [min] <----- run time
 nm          = 532;   	% desired wavelength of simulation
 Nbins       = 100;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
+dermisT     =0.0060;      %  Thickness of dermis
+
+
 
 % Set Monte Carlo launch flags
 mcflag      = 4;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
@@ -88,10 +91,18 @@ lineWidth = 0.002; % thinkness of line
 % Create tissue properties
 tissue = makeTissueList(nm); % also --> global tissue(1:Nt).s
 Nt = length(tissue);
+
+ % Initializing the optical parameter matrix
+ % Jose E Calderon
+    muav = zeros(1, Nt);
+      musv = zeros(1, Nt);
+        gv = zeros(1, Nt);
+        
 for i=1:Nt
     muav(i)  = tissue(i).mua;
     musv(i)  = tissue(i).mus;
     gv(i)    = tissue(i).g;
+    
 end
 
 % Specify Monte Carlo parameters    
@@ -133,7 +144,7 @@ for iz=1:Nz % for every depth z(iz)
     end
 
     % epidermis (60 um thick)
-    if iz>round(zsurf/dz) & iz<=round((zsurf+0.0060)/dz)
+    if iz>round(zsurf/dz) & iz<=round((zsurf+dermisT)/dz)
         T(:,:,iz) = 5; 
     end
 
@@ -147,6 +158,21 @@ for iz=1:Nz % for every depth z(iz)
             r  = sqrt(xd^2 + zd^2);	% r from vessel center
             if (r<=vesselradius)     	% if r is within vessel
                 T(:,ix,iz) = 3; % blood
+            end
+
+    end %ix
+    
+    
+     % blood vessel2 @ xc2, zc2, radius2, oriented along y axis
+    xc2      = .015;            % [cm], center of blood vessel
+    zc2      = Nz/1.5*dz;     	% [cm], center of blood vessel
+    vesselradius2  = 0.0020;      	% blood vessel radius [cm]
+    for ix2=1:Nx
+            xd2 = x(ix2) - xc2;	% vessel, x distance from vessel center
+            zd2 = z(iz) - zc2;   	% vessel, z distance from vessel center                
+            r2  = sqrt(xd2^2 + zd2^2);	% r from vessel center
+            if (r2<=vesselradius2)     	% if r is within vessel
+                T(:,ix2,iz) = 5; % blood
             end
 
     end %ix
