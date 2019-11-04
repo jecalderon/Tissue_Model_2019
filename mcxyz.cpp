@@ -356,6 +356,8 @@ int main(int argc, const char * argv[]) {
 	time_min = (double)(finish_time - start_time) / CLOCKS_PER_SEC / 60;
 	printf("Elapsed Time for %0.3e photons = %5.3f min\n", Nphotons, time_min);
 	printf("%0.2e photons per minute\n", Nphotons / time_min);
+	scanf("press any to exit %d",&mcflag);
+
 
 	/**** SAVE
 	 Convert data to relative fluence rate [cm^-2] and save.
@@ -607,7 +609,7 @@ void run() {
 
 			else if (mcflag == 5) { // draw circle
 				if (i_photon == 1)printf("Running circle simulation with %f photons\n", Nphotons);
-				r = 0.006;
+				r = radius;
 				while ((rnd = (float)rand()/(float)(RAND_MAX/(2*PI))) <= 0.0); // avoids rnd = 0
 				
 				x = r * cos(rnd);
