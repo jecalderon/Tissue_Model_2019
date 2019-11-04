@@ -44,7 +44,7 @@ Nbins       = 100;    	% # of bins in each dimension of cube Original code Nbins
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
 
 % Set Monte Carlo launch flags
-mcflag      = 5;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
+mcflag      = 4;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
                         % 3 = rectangular beam (use xfocus,yfocus for x,y halfwidths)
 launchflag  = 0;        % 0 = let mcxyz.c calculate launch trajectory
                         % 1 = manually set launch vector.
@@ -70,6 +70,14 @@ waist       = 0.00300;  	% 1/e radius of beam at focus
 ux0         = 0.7;      % trajectory projected onto x axis
 uy0         = 0.4;      % trajectory projected onto y axis
 uz0         = sqrt(1 - ux0^2 - uy0^2); % such that ux^2 + uy^2 + uz^2 = 1
+
+%flags for lines simulations mcflag = 4;
+
+lines   = 8; % number of lines
+xLine = -0.02; % location of first line
+step = 0.005; % distance from line to line
+lineWidth = 0.002; % thinkness of line 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -190,6 +198,10 @@ if SAVEON
             fprintf(fid,'%0.4f\n',musv(i));
             fprintf(fid,'%0.4f\n',gv(i));
         end
+        fprintf(fid,'%d\n',lines);
+        fprintf(fid,'%0.5f',xLine);
+        fprintf(fid,'%0.5f',step);
+        fprintf(fid ,'0.5f',lineWidth);
     fclose(fid);
 
     %% write myname_T.bin file

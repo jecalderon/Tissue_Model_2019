@@ -48,7 +48,7 @@
 #define STRLEN 		32          /* String length. */
 #define ls          1.0E-7      /* Moving photon a little bit off the voxel face */
 #define	PI          3.1415926
-#define	LIGHTSPEED	2.997925E10 /* in vacuo speed of light [cm/s] */
+#define	LIGHTSPEED	2.997925E10 /* in vacumm speed of light [cm/s] */
 #define ALIVE       1   		/* if photon not yet terminated */
 #define DEAD        0    		/* if photon is to be terminated */
 #define THRESHOLD   0.01		/* used in roulette */
@@ -143,11 +143,13 @@ float* F = NULL;
 float* R = NULL;
 int 	type;
 
+//lines parameters
+int lines;
+float xLine, step, lineWidth;
+
 void drawLine(float Xpos, float step, float radius);
 void run();
 int main(int argc, const char * argv[]) {
-
-	lineFlag = 1;
 
 	if (argc == 0) {
 		printf("assuming you've compiled mcxyz.c as gomcxyz ...\n");
@@ -236,6 +238,18 @@ int main(int argc, const char * argv[]) {
 		fgets(buf, 32, fid);
 		sscanf(buf, "%f", &gv[i]);		// anisotropy of scatter [dimensionless]
 	}
+
+	//launch lines params
+	fgets(buf, 32, fid);
+	sscanf(buf, "%d", &lines);
+	fgets(buf, 32, fid);
+	sscanf(buf, "%f", &xLine);
+	fgets(buf, 32, fid);
+	sscanf(buf, "%f", &step);
+	fgets(buf, 32, fid);
+	sscanf(buf, "%f", &lineWidth);
+
+
 	fclose(fid);
 
 	printf("time_min = %0.2f min\n", time_min);
@@ -339,16 +353,24 @@ int main(int argc, const char * argv[]) {
     printf("%s\n",myname);
     printf("requesting %0.1f min\n",time_min);
 	
-	Nphotons = 50000; // will be updated to achieve desired run time, time_min.
+	Nphotons = 100; // will be updated to achieve desired run time, time_min.
 
 	i_photon = 0;
 	
-	float numCircles = 0.12 / .001;
-	float per = 0;
+
 	CNT = 0;
 
-	
-	run();
+	if (mcflag == 0 || mcflag == 1 || mcflag == 2 || mcflag == 3) {
+		run();
+	}
+
+	else if (mcflag == 4) { //lines
+		for (int i = 0; i < lines; i++, xLine += step) {
+			printf("Drawing Line %d with %0.3f", i + 1 , lineWidth);
+			
+			drawLine(xLine, 0.001, lineWidth);
+		}
+	}
 	
 
 	printf("------------------------------------------------------\n");
@@ -503,10 +525,13 @@ void run() {
 		CNT = 0;
 
 		// Print out message about progress.
-
-		if (i_photon % 1000 == 0) {
-			printf("progress %0.1f\n", 100 * i_photon / Nphotons);
+		if (launchflag != 0) {
+			if (i_photon % 100 == 0) {
+				printf("progress %0.1f\n", 100 * i_photon / Nphotons);
+			}
 		}
+
+
 
 		// At 1000th photon, update Nphotons to achieve desired runtime (time_min)
 		if (i_photon == 1)
@@ -535,7 +560,7 @@ void run() {
 		}
 		else { // use mcflag
 			if (mcflag == 0) { // uniform beam
-				if (i_photon == 1)printf("Running laser simulation with %f photons\n", Nphotons);
+				//if (i_photon == 1)printf("Running laser simulation with %f photons\n", Nphotons);
 				// set launch point and width of beam
 				while ((rnd = RandomGen(1, 0, NULL)) <= 0.0); // avoids rnd = 0
 				r = radius * sqrt(rnd); // radius of beam at launch point
@@ -600,14 +625,19 @@ void run() {
 				uy = 0.0;
 				uz = 1.0; // collimated beam
 			}
+			/* UNUSED CODE 
 			else if (mcflag == 4) { // draw one line
 				if (i_photon == 1)printf("Running line simulation with %f photons\n", Nphotons);
-				drawLine(xs, .001, .0008);
-			}
+				for (int i = 0; i < lines; i++, xLine += step) {
+					printf("Printing Line %d", i + 1);
+					drawLine(xLine, .001, lineWidth);
+				}
+					 break;
+			}*/
 
 			else if (mcflag == 5) { // draw circle
 				if (i_photon == 1)printf("Running circle simulation with %f photons\n", Nphotons);
-				r = 0.006;
+				r = 0.003;
 				while ((rnd = (float)rand()/(float)(RAND_MAX/(2*PI))) <= 0.0); // avoids rnd = 0
 				
 				x = r * cos(rnd);
@@ -818,7 +848,7 @@ void run() {
 void drawLine(float XposLine , float step , float radiusLine) {
 	xs = XposLine;
 	mcflag = 0;
-	Nphotons = 200;
+	Nphotons = 100;
 	radius = radiusLine;
 	for (ys = -0.06;  ys <= 0.06 ; ys += step)
 		run();
