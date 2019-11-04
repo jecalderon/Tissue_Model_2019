@@ -239,7 +239,7 @@ end
 
 
 %% look Fyx at skin top layer
-Fyx = reshape(F(:,:,30),Nx,Ny)';
+Fyx = reshape(F(:,:,round(100*0.01)),Nx,Ny)';
 disp(Nz/2);
 ix = round((dx*Nx/2 + 0.15)/dx);
 iy = round(ys/dy);
