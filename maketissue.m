@@ -38,10 +38,13 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
                         % 0 = don't save. Just check the program.
 
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
-time_min    = 10;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
+time_min    = 0.5;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
 nm          = 532;   	% desired wavelength of simulation
-Nbins       = 250;    	% # of bins in each dimension of cube Original code Nbins=200
+Nbins       = 100;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
+dermisT     =0.0060;      %  Thickness of dermis
+
+
 
 % Set Monte Carlo launch flags
 mcflag      = 5;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
@@ -80,10 +83,18 @@ uz0         = sqrt(1 - ux0^2 - uy0^2); % such that ux^2 + uy^2 + uz^2 = 1
 % Create tissue properties
 tissue = makeTissueList(nm); % also --> global tissue(1:Nt).s
 Nt = length(tissue);
+
+ % Initializing the optical parameter matrix
+ % Jose E Calderon
+    muav = zeros(1, Nt);
+      musv = zeros(1, Nt);
+        gv = zeros(1, Nt);
+        
 for i=1:Nt
     muav(i)  = tissue(i).mua;
     musv(i)  = tissue(i).mus;
     gv(i)    = tissue(i).g;
+    
 end
 
 % Specify Monte Carlo parameters    
@@ -125,7 +136,7 @@ for iz=1:Nz % for every depth z(iz)
     end
 
     % epidermis (60 um thick)
-    if iz>round(zsurf/dz) & iz<=round((zsurf+0.0060)/dz)
+    if iz>round(zsurf/dz) & iz<=round((zsurf+dermisT)/dz)
         T(:,:,iz) = 5; 
     end
 
@@ -144,17 +155,16 @@ for iz=1:Nz % for every depth z(iz)
     end %ix
     
     
-    
      % blood vessel2 @ xc2, zc2, radius2, oriented along y axis
-    xc2      = .05;            % [cm], center of blood vessel 2
-    zc2      = Nz/1.5*dz;     	% [cm], center of blood vessel 2
-    radius2  = 0.001;      	% blood vessel 2 radius [cm]
+    xc2      = .015;            % [cm], center of blood vessel
+    zc2      = Nz/1.5*dz;     	% [cm], center of blood vessel
+    vesselradius2  = 0.0020;      	% blood vessel radius [cm]
     for ix2=1:Nx
             xd2 = x(ix2) - xc2;	% vessel, x distance from vessel center
             zd2 = z(iz) - zc2;   	% vessel, z distance from vessel center                
-            r2  = sqrt(xd2^2 + zd2^2);	% r2 from vessel center
-            if (r2<=radius2)     	% if r2 is within vessel
-                T(:,ix2,iz) = 7; % gray matter
+            r2  = sqrt(xd2^2 + zd2^2);	% r from vessel center
+            if (r2<=vesselradius2)     	% if r is within vessel
+                T(:,ix2,iz) = 5; % blood
             end
 
     end %ix
