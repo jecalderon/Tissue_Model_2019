@@ -38,12 +38,14 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
                         % 0 = don't save. Just check the program.
 
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
-time_min    = 0.1;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
+time_min    = 5;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
 nm          = 532;   	% desired wavelength of simulation
-Nbins       = 125;    	% # of bins in each dimension of cube Original code Nbins=200
+Nbins       = 200;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
-dermisT     =0.0060;      %  Thickness of dermis
-
+dermisT     = 0.0060;      %  Thickness of dermis
+ringT       = 0.0050;        % Thinkness of the source ring
+eRadius     = 1.000;      % Ellipse xi
+initPhotons = 150000;     %Initial number of photons
 
 
 % Set Monte Carlo launch flags
@@ -119,6 +121,9 @@ zmin = min(z);
 zmax = max(z);
 xmin = min(x);
 xmax = max(x);
+rT   = ringT;
+xi   = eRadius;
+iPh  = initPhotons;
 
 if isinf(zfocus), zfocus = 1e12; end
 
@@ -172,7 +177,7 @@ for iz=1:Nz % for every depth z(iz)
             zd2 = z(iz) - zc2;   	% vessel, z distance from vessel center                
             r2  = sqrt(xd2^2 + zd2^2);	% r from vessel center
             if (r2<=vesselradius2)     	% if r is within vessel
-                T(:,ix2,iz) = 5; % blood
+                T(:,ix2,iz) = 7; % grey matter
             end
 
     end %ix
@@ -191,7 +196,7 @@ if SAVEON
     %   which contains the Monte Carlo simulation parameters
     %   and specifies the tissue optical properties for each tissue type.
     commandwindow
-    disp(sprintf('--------create %s --------',myname))
+    fprintf('--------create %s --------\n',myname)
     filename = sprintf('%s_H.mci',myname);
     fid = fopen(filename,'w');
         % run parameters
@@ -218,7 +223,10 @@ if SAVEON
         fprintf(fid,'%0.4f\n',radius);
         fprintf(fid,'%0.4f\n',waist);
         fprintf(fid,'%0.4f\n',nm);  % Adding the ligth source wave length
-       
+        fprintf(fid,'%0.4f\n',rT);  % Adding the ring thinkness of source
+        fprintf(fid,'%0.4f\n',xi);  % Elliptical initial radius
+        fprintf(fid,'%0.4f\n',iPh);  % Initial number of Photons
+        
         % tissue optical properties
         fprintf(fid,'%d\n',Nt);
         for i=1:Nt
@@ -229,7 +237,7 @@ if SAVEON
         fprintf(fid,'%d\n',lines);
         fprintf(fid,'%0.5f',xLine);
         fprintf(fid,'%0.5f',step);
-        fprintf(fid ,'0.5f',lineWidth);
+        fprintf(fid,'%0.5f',lineWidth);
     fclose(fid);
 
     %% write myname_T.bin file

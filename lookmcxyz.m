@@ -66,9 +66,12 @@ uz0 = A(19);
 radius = A(20);
 waist = A(21);
 nm = A(22);
-Nt = A(23);
+nT = A(23);
+xi = A(24);
+iPh = A(25);
+Nt = A(26);
 
-j = 23;  % separates where optical parameters from tissue descritor data
+j = 26;  % separates where optical parameters from tissue descritor data
 for i=1:Nt
     j=j+1;
     muav(i,1) = A(j);

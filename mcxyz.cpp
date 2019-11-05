@@ -97,7 +97,7 @@ double	mua;            /* absorption coefficient [cm^-1] */
 double	mus;            /* scattering coefficient [cm^-1] */
 double	g;              /* anisotropy [-] */
 double	Nphotons;       /* number of photons in simulation */
-double  xi;				/* Hyperbolic coordinate*/
+float	iPh;			/* number of photons in simulation */
 
 /* launch parameters */
 int		mcflag, launchflag, boundaryflag , lineFlag;
@@ -106,6 +106,9 @@ float	ux0, uy0, uz0;
 float	radius;
 float	waist;
 float	nm;
+float	rT;         /*ring thikness of the source*/
+float  xi;				/* first ellipse Hyperbolic coordinate*/
+float  xi1;			/* first ellipse Hyperbolic coordinate*/
 
 /* dummy variables */
 double  rnd;            /* assigned random value 0-1 */
@@ -144,6 +147,8 @@ char* v = NULL;
 float* F = NULL;
 float* R = NULL;
 int 	type;
+
+
 
 //lines parameters
 int reps;
@@ -230,7 +235,12 @@ int main(int argc, const char * argv[]) {
 	sscanf(buf, "%f", &waist);  // waist
 	fgets(buf, 32, fid);
 	sscanf(buf, "%f", &nm);  // Wave length
-
+	fgets(buf, 32, fid);
+	sscanf(buf, "%f", &rT);  // source ring thickness
+	fgets(buf, 32, fid);
+	sscanf(buf, "%f", &xi);  // Elliptical radius
+	fgets(buf, 32, fid);
+	sscanf(buf, "%f", &iPh);  // Initial Number of Photons
 
 	// tissue optical properties
 	fgets(buf, 32, fid);
@@ -271,7 +281,7 @@ int main(int argc, const char * argv[]) {
 	if (mcflag == 2) printf("launching isotropic point source\n");
 	if (mcflag == 3) printf("launching square source\n");
 	if (mcflag == 5) printf("launching ring source\n");
-	if (mcflag == 6) printf("launching elliptical ring  source\n");
+	if (mcflag == 6) printf("launching elliptical ring radius %f source\n", xi);
 	printf("xfocus = %0.4f [cm]\n", xfocus);
 	printf("yfocus = %0.4f [cm]\n", yfocus);
 	printf("zfocus = %0.2e [cm]\n", zfocus);
@@ -360,7 +370,7 @@ int main(int argc, const char * argv[]) {
     printf("%s\n",myname);
     printf("requesting %0.1f min\n",time_min);
 	
-	Nphotons = 15000; // will be updated to achieve desired run time, time_min.
+	Nphotons = iPh; // will be updated to achieve desired run time, time_min.
 
 	i_photon = 0;
 	
@@ -643,21 +653,21 @@ void run() {
 				
 				x = r * cos(rnd);
 				y = r * sin(rnd);
-
 				z = zs;
+
 				ux = sintheta * cospsi;
 				uy = sintheta * sinpsi;
 				uz = costheta;
 			}
 
-			else if (mcflag == 6) { // draw ellipse
-				if (i_photon == 1)printf("Running circle simulation with %f photons\n", Nphotons);
-				r = radius;
-				xi = .20;  // draw circle xi=.14  .2
+			else if (mcflag == 6) { // irradiate with an ellipse structure
+				if (i_photon == 1)printf("Running Elliptical simulation with %f photons\n", Nphotons);
+				r = radius;    //This is a focus point of elliptical system
+				xi1 = xi;  // draw ellipse  xi=.14  .2  .4
 				while ((rnd = (float)rand() / (float)(RAND_MAX / (2 * PI))) <= 0.0); // avoids rnd = 0
 
-				y = r * sinh(xi)*cos(rnd);
-				x = r * cosh(xi)*sin(rnd);
+				y = r * sinh(xi1)*cos(rnd);
+				x = r * cosh(xi1)*sin(rnd);
 				z = zs;
 
 
