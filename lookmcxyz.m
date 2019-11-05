@@ -66,7 +66,7 @@ uz0 = A(19);
 radius = A(20);
 waist = A(21);
 Nt = A(22);
-j = 22;
+j = 22;  % separates where optocal parameters from tissue descritor data
 for i=1:Nt
     j=j+1;
     muav(i,1) = A(j);
@@ -83,7 +83,7 @@ filename = sprintf('%s_F.bin',myname);
 disp(['loading ' filename])
 tic
     fid = fopen(filename, 'rb');
-    [Data count] = fread(fid, Ny*Nx*Nz, 'float');
+    [Data, count] = fread(fid, Ny*Nx*Nz, 'float');
     fclose(fid);
 toc
 F = reshape(Data,Ny,Nx,Nz); % F(y,x,z)
@@ -94,7 +94,7 @@ filename = sprintf('%s_T.bin',myname);
 disp(['loading ' filename])
 tic
     fid = fopen(filename, 'rb');
-    [Data count] = fread(fid, Ny*Nx*Nz, 'uint8');
+    [Data, count] = fread(fid, Ny*Nx*Nz, 'uint8');
     fclose(fid);
 toc
 T = reshape(Data,Ny,Nx,Nz); % T(y,x,z)
@@ -117,10 +117,10 @@ xdiff = xmax-xmin;
 
 
 
-%%
+% Create 3 D model os tissue scattering of cluence rate%
 [Xii,Yii,Zii] = ndgrid(1:size(T,1) , 1:size(T ,2) , 1:size(T,3));
 pointsize = 10;
-figure(10);scatter3(Yii(:) , Zii(:) , Xii(:), pointsize , log10(F(:)));  
+figure(10);scatter3(Yii(:) , Zii(:) , Xii(:), pointsize , log10(F(:)) );  
 
 %figure (11); surf(Yii , Xii , Zii);
 %% Look at structure, Tzx
@@ -289,6 +289,38 @@ if SAVEPICSON
     name = sprintf('%s_Azx.jpg',myname);
     savepic(2,[4 3],name)
 end
+
+
+
+%% look Fyx at Tissue Half way 
+% To illustrate the x-y cross section inside the tissue%%%
+%%%Jose E Calderon  %%%%%%%%%%%%%%%%%%%%%%%%
+Fyx = reshape(F(:,:,round(Nz/2)),Nx,Ny)';
+disp(Nz/2);
+ix = round((dx*Nx/2 + 0.15)/dx);
+iy = round(ys/dy);
+yys  = ys;
+%Fdet = mean(reshape( Fzy(iz+[-1:1],iy+[0 1]),6,1));
+
+figure(6);clf
+imagesc(x,y,log10(Fyx),[.5 2.8])
+hold on
+text(max(z)*1.2,min(y)-0.04*max(y),'log_{10}( \phi )','fontsize',fz)
+colorbar
+set(gca,'fontsize',sz)
+xlabel('x [cm]')
+ylabel('y [cm]')
+title('Fluence \phi [W/cm^2/W.delivered] ','fontweight','normal','fontsize',fz)
+colormap(makec2f)
+axis equal image
+text(min(z)-0.2*max(z),min(y)-0.08*max(y),sprintf('runtime = %0.1f min',time_min),...
+    'fontsize',fz2)
+
+if SAVEPICSON
+    name = sprintf('%s_Fyx.jpg',myname);
+    savepic(3,[4 3],name)
+end
+
 
 drawnow
 

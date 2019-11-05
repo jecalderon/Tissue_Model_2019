@@ -40,7 +40,7 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
 time_min    = 0.5;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
 nm          = 532;   	% desired wavelength of simulation
-Nbins       = 200;    	% # of bins in each dimension of cube Original code Nbins=200
+Nbins       = 100;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
 dermisT     =0.0060;      %  Thickness of dermis
 
@@ -132,7 +132,7 @@ if isinf(zfocus), zfocus = 1e12; end
 
 T = double(zeros(Ny,Nx,Nz)); 
 
-T = T + 4;      % fill background with skin (dermis)
+T = T + 10;      % fill background with skin (dermis)
 
 zsurf = 0.0100;  % position of air/skin surface
 
