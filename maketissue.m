@@ -40,14 +40,14 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
 time_min    = 0.5;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
 nm          = 532;   	% desired wavelength of simulation
-Nbins       = 100;    	% # of bins in each dimension of cube Original code Nbins=200
+Nbins       = 200;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
 dermisT     =0.0060;      %  Thickness of dermis
 
 
 
 % Set Monte Carlo launch flags
-mcflag      = 4;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
+mcflag      = 6;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
                         % 3 = rectangular beam (use xfocus,yfocus for x,y halfwidths)
 launchflag  = 0;        % 0 = let mcxyz.c calculate launch trajectory
                         % 1 = manually set launch vector.
@@ -66,7 +66,7 @@ yfocus      = 0;        % set y,position of focus
 zfocus      = inf;    	% set z,position of focus (=inf for collimated beam)
 
 % only used if mcflag == 0 or 1 or 3 (not 2=isotropic pt.)
-radius      = 0.00300;   % 1/e radius of beam at tissue surface
+radius      = 0.00900;   % 1/e radius of beam at tissue surface
 waist       = 0.00300;  	% 1/e radius of beam at focus
 
 % only used if launchflag == 1 (manually set launch trajectory):
@@ -76,7 +76,7 @@ uz0         = sqrt(1 - ux0^2 - uy0^2); % such that ux^2 + uy^2 + uz^2 = 1
 
 %flags for lines simulations mcflag = 4;
 
-lines   = 8; % number of lines
+lines   = 1; % number of lines
 xLine = -0.02; % location of first line
 step = 0.005; % distance from line to line
 lineWidth = 0.002; % thinkness of line 

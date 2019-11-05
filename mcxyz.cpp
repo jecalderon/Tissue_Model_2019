@@ -144,10 +144,11 @@ float* R = NULL;
 int 	type;
 
 //lines parameters
-int lines;
+int reps;
 float xLine, step, lineWidth;
 
 void drawLine(float Xpos, float step, float radius);
+float RandomFloat(float a, float b);
 void run();
 int main(int argc, const char * argv[]) {
 
@@ -241,7 +242,7 @@ int main(int argc, const char * argv[]) {
 
 	//launch lines params
 	fgets(buf, 32, fid);
-	sscanf(buf, "%d", &lines);
+	sscanf(buf, "%d", &reps);
 	fgets(buf, 32, fid);
 	sscanf(buf, "%f", &xLine);
 	fgets(buf, 32, fid);
@@ -353,23 +354,15 @@ int main(int argc, const char * argv[]) {
     printf("%s\n",myname);
     printf("requesting %0.1f min\n",time_min);
 	
-	Nphotons = 100; // will be updated to achieve desired run time, time_min.
+	Nphotons = 10000; // will be updated to achieve desired run time, time_min.
 
 	i_photon = 0;
 	
 
 	CNT = 0;
 
-	if (mcflag == 0 || mcflag == 1 || mcflag == 2 || mcflag == 3) {
+	for (int i = 0; i < reps; i++, radius += step) {
 		run();
-	}
-
-	else if (mcflag == 4) { //lines
-		for (int i = 0; i < lines; i++, xLine += step) {
-			printf("Drawing Line %d with %0.3f", i + 1 , lineWidth);
-			
-			drawLine(xLine, 0.001, lineWidth);
-		}
 	}
 	
 
@@ -527,11 +520,10 @@ void run() {
 		CNT = 0;
 
 		// Print out message about progress.
-		if (launchflag != 0) {
 			if (i_photon % 100 == 0) {
 				printf("progress %0.1f\n", 100 * i_photon / Nphotons);
 			}
-		}
+		
 
 
 
@@ -650,6 +642,32 @@ void run() {
 				ux = sintheta * cospsi;
 				uy = sintheta * sinpsi;
 				uz = costheta;
+			}
+
+			else if (mcflag == 6) {
+				//OBLATE 
+				float xi = 0.02;
+				if (i_photon == 1)printf("Running oblate spheroid simulation %d with %f\n", reps, Nphotons);
+
+
+				float phi = RandomFloat(0, 2 * PI);
+				float eta = RandomFloat(0, PI/3);
+					
+				
+			
+
+				x = radius*cosh(xi)*cos(eta)*cos(phi);
+				y = radius*sinh(xi)*sin(eta);
+				z = zs;
+
+	
+
+				ux = sintheta * cospsi;
+				uy = sintheta * sinpsi;
+				uz = costheta;
+
+
+
 			}
 
 
@@ -846,6 +864,14 @@ void run() {
 	} while (i_photon < Nphotons);  /* end RUN */
 
 	i_photon = 0 ;
+}
+
+
+float RandomFloat(float a, float b) {
+	float random = ((float)rand()) / (float)RAND_MAX;
+	float diff = b - a;
+	float r = random * diff;
+	return a + r;
 }
 
 void drawLine(float XposLine , float step , float radiusLine) {

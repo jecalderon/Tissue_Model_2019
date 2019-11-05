@@ -136,6 +136,13 @@ tissue(j).mua   = 1;
 tissue(j).mus   = 100;
 tissue(j).g     = 0.90;
 
+j=10;
+tissue(j).name  = 'Polydimethy siloxane (PDMS)';
+tissue(j).mua   = .1;
+tissue(j).mus   = 80;
+tissue(j).g     = 0.50;
+
+
 disp(sprintf('---- tissueList ------ \tmua   \tmus  \tg  \tmusp'))
 for i=1:length(tissue)
     disp(sprintf('%d\t%15s\t%0.4f\t%0.1f\t%0.3f\t%0.1f',...
