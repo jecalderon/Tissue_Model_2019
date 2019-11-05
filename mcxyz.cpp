@@ -97,6 +97,7 @@ double	mua;            /* absorption coefficient [cm^-1] */
 double	mus;            /* scattering coefficient [cm^-1] */
 double	g;              /* anisotropy [-] */
 double	Nphotons;       /* number of photons in simulation */
+double  xi;				/* Hyperbolic coordinate*/
 
 /* launch parameters */
 int		mcflag, launchflag, boundaryflag , lineFlag;
@@ -266,6 +267,8 @@ int main(int argc, const char * argv[]) {
 	if (mcflag == 1) printf("launching Gaissian beam\n");
 	if (mcflag == 2) printf("launching isotropic point source\n");
 	if (mcflag == 3) printf("launching square source\n");
+	if (mcflag == 5) printf("launching ring source\n");
+	if (mcflag == 6) printf("launching elliptical ring  source\n");
 	printf("xfocus = %0.4f [cm]\n", xfocus);
 	printf("yfocus = %0.4f [cm]\n", yfocus);
 	printf("zfocus = %0.2e [cm]\n", zfocus);
@@ -644,31 +647,22 @@ void run() {
 				uz = costheta;
 			}
 
-			else if (mcflag == 6) {
-				//OBLATE 
-				float xi = 0.02;
-				if (i_photon == 1)printf("Running oblate spheroid simulation %d with %f\n", reps, Nphotons);
+			else if (mcflag == 6) { // draw ellipse
+				if (i_photon == 1)printf("Running circle simulation with %f photons\n", Nphotons);
+				r = radius;
+				xi = .20;  // draw circle xi=.14  .2
+				while ((rnd = (float)rand() / (float)(RAND_MAX / (2 * PI))) <= 0.0); // avoids rnd = 0
 
-
-				float phi = RandomFloat(0, 2 * PI);
-				float eta = RandomFloat(0, PI/3);
-					
-				
-			
-
-				x = radius*cosh(xi)*cos(eta)*cos(phi);
-				y = radius*sinh(xi)*sin(eta);
+				y = r * sinh(xi)*cos(rnd);
+				x = r * cosh(xi)*sin(rnd);
 				z = zs;
 
-	
 
 				ux = sintheta * cospsi;
 				uy = sintheta * sinpsi;
 				uz = costheta;
-
-
-
 			}
+
 
 
 		} // end  use mcflag
