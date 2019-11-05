@@ -140,7 +140,7 @@ for iz=1:Nz % for every depth z(iz)
 
     % air
     if iz<=round(zsurf/dz)
-        T(:,:,iz) = 2; 
+        T(:,:,iz) = 1; 
     end
 
     % epidermis (60 um thick)
