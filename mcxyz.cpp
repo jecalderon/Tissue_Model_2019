@@ -105,6 +105,7 @@ float	xfocus, yfocus, zfocus;
 float	ux0, uy0, uz0;
 float	radius;
 float	waist;
+float	nm;
 
 /* dummy variables */
 double  rnd;            /* assigned random value 0-1 */
@@ -227,6 +228,8 @@ int main(int argc, const char * argv[]) {
 	sscanf(buf, "%f", &radius);  // radius
 	fgets(buf, 32, fid);
 	sscanf(buf, "%f", &waist);  // waist
+	fgets(buf, 32, fid);
+	sscanf(buf, "%f", &nm);  // Wave length
 
 
 	// tissue optical properties
@@ -357,7 +360,7 @@ int main(int argc, const char * argv[]) {
     printf("%s\n",myname);
     printf("requesting %0.1f min\n",time_min);
 	
-	Nphotons = 10000; // will be updated to achieve desired run time, time_min.
+	Nphotons = 15000; // will be updated to achieve desired run time, time_min.
 
 	i_photon = 0;
 	

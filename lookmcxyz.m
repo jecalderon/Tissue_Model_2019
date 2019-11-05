@@ -65,8 +65,10 @@ uy0 = A(18);
 uz0 = A(19);
 radius = A(20);
 waist = A(21);
-Nt = A(22);
-j = 22;  % separates where optocal parameters from tissue descritor data
+nm = A(22);
+Nt = A(23);
+
+j = 23;  % separates where optical parameters from tissue descritor data
 for i=1:Nt
     j=j+1;
     muav(i,1) = A(j);
@@ -124,7 +126,7 @@ figure(10);scatter3(Yii(:) , Zii(:) , Xii(:), pointsize , log10(F(:)) );
 
 %figure (11); surf(Yii , Xii , Zii);
 %% Look at structure, Tzx
-Tzx = reshape(T(Ny/2,:,:),Nx,Nz)';
+Tzx = reshape(T(round(Ny/2),:,:),Nx,Nz)';
 tissue = makeTissueList(nm);
 Nt = length(tissue);
 
@@ -188,7 +190,7 @@ end
 
 
 %% Look at Fluence Fzx @ launch point
-Fzx = reshape(F(Ny/2,:,:),Nx,Nz)'; % in z,x plane through source
+Fzx = reshape(F(round(Ny/2),:,:),Nx,Nz)'; % in z,x plane through source
 
 figure(2);clf
 imagesc(x,z,log10(Fzx),[.5 2.8])
@@ -211,7 +213,7 @@ if SAVEPICSON
 end
 
 %% look Fzy
-Fzy = reshape(F(:,Nx/2,:),Ny,Nz)';
+Fzy = reshape(F(:,round(Nx/2),:),Ny,Nz)';
 
 iy = round((dy*Ny/2 + 0.15)/dy);
 iz = round(zs/dz);
@@ -239,7 +241,7 @@ end
 
 
 %% look Fyx at skin top layer
-Fyx = reshape(F(:,:,round(100*0.01)),Nx,Ny)';
+Fyx = reshape(F(:,:,1),Nx,Ny)';
 disp(Nz/2);
 ix = round((dx*Nx/2 + 0.15)/dx);
 iy = round(ys/dy);
@@ -266,7 +268,7 @@ if SAVEPICSON
 end
 
 %% look Azx
-Fzx = reshape(F(Ny/2,:,:),Nx,Nz)'; % in z,x plane through source
+Fzx = reshape(F(round(Ny/2),:,:),Nx,Nz)'; % in z,x plane through source
 mua = muav(reshape(T(35,:,:),Nx,Nz)');
 Azx = Fzx.*mua;
 

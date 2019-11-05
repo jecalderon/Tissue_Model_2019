@@ -29,13 +29,14 @@ s(18).s = 'uy0';
 s(19).s = 'uz0';
 s(20).s = 'radius';
 s(21).s = 'waist';
-s(22).s = 'Nt';
+s(22).s = 'nm';
+s(23).s = 'Nt';
 
-for i=1:22
+for i=1:23
     disp(sprintf('%d\t%10s = %0.4f',i,s(i).s,B(i)))
 end
 
-for j=1:B(22)
+for j=1:B(23)
     i=i+1;
     disp(sprintf('---'))
     disp(sprintf('%d\tmua = %0.4f',i,B(i)))

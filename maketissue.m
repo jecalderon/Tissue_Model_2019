@@ -38,9 +38,9 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
                         % 0 = don't save. Just check the program.
 
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
-time_min    = 0.5;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
+time_min    = 0.1;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
 nm          = 532;   	% desired wavelength of simulation
-Nbins       = 100;    	% # of bins in each dimension of cube Original code Nbins=200
+Nbins       = 125;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
 dermisT     =0.0060;      %  Thickness of dermis
 
@@ -217,6 +217,8 @@ if SAVEON
         fprintf(fid,'%0.4f\n',uz0);
         fprintf(fid,'%0.4f\n',radius);
         fprintf(fid,'%0.4f\n',waist);
+        fprintf(fid,'%0.4f\n',nm);  % Adding the ligth source wave length
+       
         % tissue optical properties
         fprintf(fid,'%d\n',Nt);
         for i=1:Nt
@@ -243,7 +245,7 @@ end % SAVEON
 
 %% Look at structure of Tzx at iy=Ny/2
 Txzy = shiftdim(T,1);   % Tyxz --> Txzy
-Tzx  = Txzy(:,:,Ny/2)'; % Tzx
+Tzx  = Txzy(:,:,round(Ny/2))'; % Tzx
 
 %%
 figure(1); clf
