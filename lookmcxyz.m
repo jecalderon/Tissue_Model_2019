@@ -177,12 +177,22 @@ switch mcflag
             plot([xx xx],[zs zz],'r-')
         end
         
-        case 4 % SFDI
+    case 4 % SFDI
         zz = max(z);
         for i=0:N
             xx = -radius + 2*radius*i/N;
             plot([xx xx],[zs zz],'r-')
         end
+        
+    case 6 % Elliptical
+        for i=0:N
+            plot((-radius + 2*radius*i/N)*[1 1],[zs max(z)],'r-')
+        end
+    
+    case 7 % Elliptical
+        for i=0:N
+            plot((-radius + 2*radius*i/N)*[1 1],[zs max(z)],'r-')
+        end   
 end
 axis equal image
 

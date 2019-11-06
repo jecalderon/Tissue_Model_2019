@@ -684,7 +684,7 @@ void run() {
 
 				
 
-					xi1 = xi + (rT*RandomGen(1, 0, NULL));  // draw ellipse  xi=.14  .2  .4
+					xi1 = xi*RandomGen(1, 0, NULL);  // draw ellipse  xi=.14  .2  .4
 					while ((rnd = (float)rand() / (float)(RAND_MAX / (2 * PI))) <= 0.0); // avoids rnd = 0
 
 					y = r * sinh(xi1)*cos(rnd);

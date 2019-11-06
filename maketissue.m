@@ -40,17 +40,17 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
 time_min    = .5;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
 nm          = 602;   	% desired wavelength of simulation
-Nbins       = 250;    	% # of bins in each dimension of cube Original code Nbins=200
-binsize     = 0.00025; 	% size of each bin, eg. [cm] or [mm]
+Nbins       = 150;    	% # of bins in each dimension of cube Original code Nbins=200
+binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
 dermisT     = 0.0060;      %  Thickness of dermis
 epiT     = 0.0010;      %  Thickness of dermis
 ringT       = 0.20;        % Thinkness of the source ring
 eRadius     = .200;      % Ellipse xi
-initPhotons = 200000;     %Initial number of photons
+initPhotons = 1000;     %Initial number of photons
 
 
 % Set Monte Carlo launch flags
-mcflag      = 6;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
+mcflag      = 7;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
                         % 3 = rectangular beam (use xfocus,yfocus for x,y halfwidths)
 launchflag  = 0;        % 0 = let mcxyz.c calculate launch trajectory
                         % 1 = manually set launch vector.
@@ -197,12 +197,12 @@ zsurf = 0.0100;  % position of air/skin surface
  end % iz
 
 %%%%%%%%%%%%%%%%  Surrounding  %%%%%%%%%%%%%%%%%%%%%%%%
-for sz2=1:Nz % for every depth z(iz) surrounding
-             % sutrrounding environment with air
-        T(1:round(Nx/4),1:round(Ny/4),sz2) = 1;
-        T(round(3*Nx/4):Nx,round(3*Ny/4):Ny,sz2) = 1; 
-end  %  sz2
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% for sz2=1:Nz % for every depth z(iz) surrounding
+%              % sutrrounding environment with air
+%         T(1:round(Nx/1.3),1:round(Ny/10),sz2) = 1;
+%         T(1:round(Nx/1.3),round(Ny/1.1):Ny,sz2) = 1; 
+% end  %  sz2
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%
 if SAVEON
@@ -327,7 +327,7 @@ switch mcflag
             plot([xx xx],[zs zz],'r-')
         end
         
-        case 6 % uniform
+   case 6 % uniform elliptical
         for i=0:N
             plot((-radius + 2*radius*i/N)*[1 1],[zs max(z)],'r-')
         end
