@@ -156,6 +156,8 @@ float xLine, step, lineWidth;
 
 void drawLine(float Xpos, float step, float radius);
 float RandomFloat(float a, float b);
+
+
 void run();
 int main(int argc, const char * argv[]) {
 
@@ -635,10 +637,10 @@ void run() {
 				uy = 0.0;
 				uz = 1.0; // collimated beam
 			}
-			/* UNUSED CODE 
+			/* UNUSED CODE   
 			else if (mcflag == 4) { // draw one line
 				if (i_photon == 1)printf("Running line simulation with %f photons\n", Nphotons);
-				for (int i = 0; i < lines; i++, xLine += step) {
+				for (int i = 0; i < 3; i++, xLine += step) {
 					printf("Printing Line %d", i + 1);
 					drawLine(xLine, .001, lineWidth);
 				}
@@ -660,10 +662,10 @@ void run() {
 				uz = costheta;
 			}
 
-			else if (mcflag == 6) { // irradiate with an ellipse structure
+			else if (mcflag == 6) { // irradiate with an elliptic rings structures
 				if (i_photon == 1)printf("Running Elliptical simulation with %f photons\n", Nphotons);
 				r = radius;    //This is a focus point of elliptical system
-				xi1 = xi;  // draw ellipse  xi=.14  .2  .4
+				xi1 = xi + (rT*RandomGen(1, 0, NULL));  // draw ellipse  xi=.14  .2  .4
 				while ((rnd = (float)rand() / (float)(RAND_MAX / (2 * PI))) <= 0.0); // avoids rnd = 0
 
 				y = r * sinh(xi1)*cos(rnd);
@@ -676,7 +678,42 @@ void run() {
 				uz = costheta;
 			}
 
+			else if (mcflag == 7) { // irradiate with an ellipse structure
+				if (i_photon == 1)printf("Running Elliptical simulation with %f photons\n", Nphotons);
+				r = radius;    //This is a focus point of elliptical system
 
+				
+
+					xi1 = xi + (rT*RandomGen(1, 0, NULL));  // draw ellipse  xi=.14  .2  .4
+					while ((rnd = (float)rand() / (float)(RAND_MAX / (2 * PI))) <= 0.0); // avoids rnd = 0
+
+					y = r * sinh(xi1)*cos(rnd);
+					x = r * cosh(xi1)*sin(rnd);
+					z = zs;
+
+
+					ux = sintheta * cospsi;
+					uy = sintheta * sinpsi;
+					uz = costheta;
+
+				}
+			
+
+			else if (mcflag == 8) { // Hyperbilic SFDI
+			if (i_photon == 1)printf("Running Elliptical simulation with %f photons\n", Nphotons);
+			r = radius;    //This is a focus point of elliptical system
+			xi1 = xi * (RandomGen(1, 0, NULL));  // draw ellipse  xi=.14  .2  .4
+			while ((rnd = (float)rand() / (float)(RAND_MAX / (2 * PI))) <= 0.0); // avoids rnd = 0
+
+			y = r * sinh(xi1)*cos(rnd);
+			x = r * cosh(xi1)*sin(rnd);
+			z = zs;
+
+
+			ux = sintheta * cospsi;
+			uy = sintheta * sinpsi;
+			uz = costheta;
+			}
 
 		} // end  use mcflag
 		/****************************/
