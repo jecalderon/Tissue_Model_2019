@@ -38,14 +38,14 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
                         % 0 = don't save. Just check the program.
 
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
-time_min    = 5;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
-nm          = 532;   	% desired wavelength of simulation
+time_min    = .5;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
+nm          = 602;   	% desired wavelength of simulation
 Nbins       = 200;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
 dermisT     = 0.0060;      %  Thickness of dermis
 ringT       = 0.0050;        % Thinkness of the source ring
-eRadius     = 1.000;      % Ellipse xi
-initPhotons = 150000;     %Initial number of photons
+eRadius     = .200;      % Ellipse xi
+initPhotons = 50000;     %Initial number of photons
 
 
 % Set Monte Carlo launch flags
@@ -68,7 +68,7 @@ yfocus      = 0;        % set y,position of focus
 zfocus      = inf;    	% set z,position of focus (=inf for collimated beam)
 
 % only used if mcflag == 0 or 1 or 3 (not 2=isotropic pt.)
-radius      = 0.00900;   % 1/e radius of beam at tissue surface
+radius      = .02;   % 1/e radius of beam at tissue surface
 waist       = 0.00300;  	% 1/e radius of beam at focus
 
 % only used if launchflag == 1 (manually set launch trajectory):
