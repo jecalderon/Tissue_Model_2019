@@ -188,14 +188,11 @@ zsurf = 0.0100;  % position of air/skin surface
             end
 
     end %ix
-  
-
-    % air surrounding environment
+    
+    % air surface environment
     if iz<=round(zsurf/dz)
         T(:,:,iz) = 1; 
     end
-  
-
     
  end % iz
 
@@ -203,7 +200,7 @@ zsurf = 0.0100;  % position of air/skin surface
 for sz2=1:Nz % for every depth z(iz) surrounding
              % sutrrounding environment with air
         T(1:round(Nx/4),1:round(Ny/4),sz2) = 1;
-        T(round(Nx*3/4):Nx,round(Ny*3/4):Ny,sz2) = 1; 
+        T(round(3*Nx/4):Nx,round(3*Ny/4):Ny,sz2) = 1; 
 end  %  sz2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -329,6 +326,12 @@ switch mcflag
             xx = -radius + 2*radius*i/20;
             plot([xx xx],[zs zz],'r-')
         end
+        
+        case 6 % uniform
+        for i=0:N
+            plot((-radius + 2*radius*i/N)*[1 1],[zs max(z)],'r-')
+        end
+
 end
 
 disp('done')
