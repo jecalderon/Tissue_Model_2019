@@ -43,6 +43,7 @@ nm          = 602;   	% desired wavelength of simulation
 Nbins       = 250;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.00025; 	% size of each bin, eg. [cm] or [mm]
 dermisT     = 0.0060;      %  Thickness of dermis
+epiT     = 0.0010;      %  Thickness of dermis
 ringT       = 0.20;        % Thinkness of the source ring
 eRadius     = .200;      % Ellipse xi
 initPhotons = 200000;     %Initial number of photons
@@ -153,6 +154,12 @@ zsurf = 0.0100;  % position of air/skin surface
         T(:,:,iz) = 5; 
     end
 
+       % epidermis (10 um thick  epit)
+    if iz>round((zsurf+dermisT)/dz) && iz<=round((zsurf+dermisT+epiT)/dz)
+        T(:,:,iz) = 4; 
+    end
+
+    
     % blood vessel @ xc, zc, radius, oriented along y axis
     xc      = 0;            % [cm], center of blood vessel
     zc      = Nz/1.5*dz;     	% [cm], center of blood vessel
