@@ -40,16 +40,17 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
 time_min    = .5;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
 nm          = 602;   	% desired wavelength of simulation
-Nbins       = 250;    	% # of bins in each dimension of cube Original code Nbins=200
-binsize     = 0.00025; 	% size of each bin, eg. [cm] or [mm]
+Nbins       = 150;    	% # of bins in each dimension of cube Original code Nbins=200
+binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
 dermisT     = 0.0060;      %  Thickness of dermis
+epiT     = 0.0010;      %  Thickness of dermis
 ringT       = 0.20;        % Thinkness of the source ring
 eRadius     = .200;      % Ellipse xi
-initPhotons = 200000;     %Initial number of photons
+initPhotons = 1000;     %Initial number of photons
 
 
 % Set Monte Carlo launch flags
-mcflag      = 6;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
+mcflag      = 7;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
                         % 3 = rectangular beam (use xfocus,yfocus for x,y halfwidths)
 launchflag  = 0;        % 0 = let mcxyz.c calculate launch trajectory
                         % 1 = manually set launch vector.
@@ -153,9 +154,9 @@ zsurf = 0.0100;  % position of air/skin surface
         T(:,:,iz) = 5; 
     end
 
-       % dermis (10 um thick)
-    if iz>round(zsurf+epiT/dz) && iz<=round((zsurf+dermisT)/dz)
-        T(:,:,iz) = 5; 
+       % epidermis (10 um thick  epit)
+    if iz>round((zsurf+dermisT)/dz) && iz<=round((zsurf+dermisT+epiT)/dz)
+        T(:,:,iz) = 4; 
     end
 
     
@@ -187,24 +188,21 @@ zsurf = 0.0100;  % position of air/skin surface
             end
 
     end %ix
-  
-
-    % air surrounding environment
+    
+    % air surface environment
     if iz<=round(zsurf/dz)
         T(:,:,iz) = 1; 
     end
-  
-
     
  end % iz
 
 %%%%%%%%%%%%%%%%  Surrounding  %%%%%%%%%%%%%%%%%%%%%%%%
-for sz2=1:Nz % for every depth z(iz) surrounding
-             % sutrrounding environment with air
-        T(1:round(Nx/4),1:round(Ny/4),sz2) = 1;
-        T(round(Nx*3/4):Nx,round(Ny*3/4):Ny,sz2) = 1; 
-end  %  sz2
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ for sz2=1:Nz % for every depth z(iz) surrounding
+              % sutrrounding environment with air
+         T(1:10,1:10,sz2) = 1;
+         T(sz2,round(Ny/5):Ny,sz2) = 1; 
+ end  %  sz2
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%
 if SAVEON
@@ -328,6 +326,12 @@ switch mcflag
             xx = -radius + 2*radius*i/20;
             plot([xx xx],[zs zz],'r-')
         end
+        
+   case 6 % uniform elliptical
+        for i=0:N
+            plot((-radius + 2*radius*i/N)*[1 1],[zs max(z)],'r-')
+        end
+
 end
 
 disp('done')

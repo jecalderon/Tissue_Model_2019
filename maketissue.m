@@ -197,12 +197,12 @@ zsurf = 0.0100;  % position of air/skin surface
  end % iz
 
 %%%%%%%%%%%%%%%%  Surrounding  %%%%%%%%%%%%%%%%%%%%%%%%
-% for sz2=1:Nz % for every depth z(iz) surrounding
-%              % sutrrounding environment with air
-%         T(1:round(Nx/1.3),1:round(Ny/10),sz2) = 1;
-%         T(1:round(Nx/1.3),round(Ny/1.1):Ny,sz2) = 1; 
-% end  %  sz2
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  for sz2=1:Nz % for every depth z(iz) surrounding
+%               % sutrrounding environment with air
+%          T(1:20,1:20,sz2) = 1;
+%          T(Nx-10:end,Ny-10:end,sz2) = 1; 
+%  end  %  sz2
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%
 if SAVEON
