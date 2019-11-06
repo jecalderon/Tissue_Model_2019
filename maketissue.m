@@ -192,7 +192,7 @@ zsurf = 0.0100;  % position of air/skin surface
     
  end % iz
 
-%%%%%%%%%%%%%%%%%%%Surrounding%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%  Surrounding  %%%%%%%%%%%%%%%%%%%%%%%%
 for sz2=1:Nz % for every depth z(iz) surrounding
              % sutrrounding environment with air
         T(1:round(Nx/4),1:round(Ny/4),sz2) = 1;
