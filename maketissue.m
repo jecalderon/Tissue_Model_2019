@@ -141,15 +141,15 @@ T = T + 10;      % fill background with skin (dermis)
 
 zsurf = 0.0100;  % position of air/skin surface
 
-for iz=1:Nz % for every depth z(iz)
-
-    % air
-    if iz<=round(zsurf/dz)
-        T(:,:,iz) = 1; 
-    end
+ for iz=1:Nz % for every depth z(iz)
+ 
+%     % air
+%     if iz<=round(zsurf/dz)
+%         T(:,:,iz) = 1; 
+%     end
 
     % epidermis (60 um thick)
-    if iz>round(zsurf/dz) & iz<=round((zsurf+dermisT)/dz)
+    if iz>round(zsurf/dz) && iz<=round((zsurf+dermisT)/dz)
         T(:,:,iz) = 5; 
     end
 
@@ -181,9 +181,24 @@ for iz=1:Nz % for every depth z(iz)
             end
 
     end %ix
-    
+  
+
+    % air surrounding environment
+    if iz<=round(zsurf/dz)
+        T(:,:,iz) = 1; 
+    end
+  
 end % iz
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+for iz2=1:Nz % for every depth z(iz) surrounding
+             % sutrrounding environment with air
+    if iz2>=round(zsurf/dz)
+        T(1:round(Nx/4),1:round(Ny/4),iz2) = 1;
+        T(round(Nx*3/4):Nx,round(Ny*3/4):Ny,iz2) = 1; 
+    end
+end  %  iz2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%
 if SAVEON
