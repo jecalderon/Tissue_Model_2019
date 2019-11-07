@@ -38,23 +38,23 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
                         % 0 = don't save. Just check the program.
 
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
-time_min    = .5;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
+time_min    = 20;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
 nm          = 602;   	% desired wavelength of simulation
-Nbins       = 150;    	% # of bins in each dimension of cube Original code Nbins=200
+Nbins       = 250;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
 dermisT     = 0.0060;      %  Thickness of dermis
 epiT     = 0.0010;      %  Thickness of dermis
-ringT       = 0.20;        % Thinkness of the source ring
-eRadius     = .200;      % Ellipse xi
-initPhotons = 1000;     %Initial number of photons
+ringT       = 0.30;        % Thinkness of the source ring
+eRadius     = .300;      % Ellipse xi
+initPhotons = 600000;     %Initial number of photons
 
 
 % Set Monte Carlo launch flags
-mcflag      = 7;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
+mcflag      = 0;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
                         % 3 = rectangular beam (use xfocus,yfocus for x,y halfwidths)
 launchflag  = 0;        % 0 = let mcxyz.c calculate launch trajectory
                         % 1 = manually set launch vector.
-boundaryflag = 2;       % 0 = no boundaries, 1 = escape at boundaries
+boundaryflag = 1;       % 0 = no boundaries, 1 = escape at boundaries
                         % 2 = escape at surface only. No x, y, bottom z
                         % boundaries
 
@@ -69,7 +69,7 @@ yfocus      = 0;        % set y,position of focus
 zfocus      = inf;    	% set z,position of focus (=inf for collimated beam)
 
 % only used if mcflag == 0 or 1 or 3 (not 2=isotropic pt.)
-radius      = .02;   % 1/e radius of beam at tissue surface
+radius      = .002;   % 1/e radius of beam at tissue surface
 waist       = 0.00300;  	% 1/e radius of beam at focus
 
 % only used if launchflag == 1 (manually set launch trajectory):
@@ -138,7 +138,7 @@ if isinf(zfocus), zfocus = 1e12; end
 
 T = double(zeros(Ny,Nx,Nz)); 
 
-T = T + 10;      % fill background with skin (dermis)
+T = T + 1;      % fill background with skin (dermis)
 
 zsurf = 0.0100;  % position of air/skin surface
 
@@ -149,18 +149,26 @@ zsurf = 0.0100;  % position of air/skin surface
 %         T(:,:,iz) = 1; 
 %     end
 
-    % epidermis (60 um thick)
-    if iz>round(zsurf/dz) && iz<=round((zsurf+dermisT)/dz)
-        T(:,:,iz) = 5; 
-    end
+%     %epidermis (60 um thick)
+%     if iz>round(zsurf/dz) && iz<=round((zsurf+dermisT)/dz)
+%         T(:,:,iz) = 5; 
+%     end
+% 
+%        %epidermis (10 um thick  epit)
+%     if iz>round((zsurf+dermisT)/dz) && iz<=round((zsurf+dermisT+epiT)/dz)
+%         T(:,:,iz) = 4; 
+%     end
 
-       % epidermis (10 um thick  epit)
-    if iz>round((zsurf+dermisT)/dz) && iz<=round((zsurf+dermisT+epiT)/dz)
-        T(:,:,iz) = 4; 
-    end
 
-    
-    % blood vessel @ xc, zc, radius, oriented along y axis
+%% Make a cube of PDMS that will contain all the tissues , rest is air
+    qx = Nx/2;
+    qy = Ny/2;
+    rad = 70;
+    if(iz <= Nz/1.2 && iz >= Nz/2)
+        T((qy-rad):(qy+rad),(qx-rad):(qx+rad),iz) = 10;
+    end
+ %%   
+    %blood vessel @ xc, zc, radius, oriented along y axis
     xc      = 0;            % [cm], center of blood vessel
     zc      = Nz/1.5*dz;     	% [cm], center of blood vessel
     vesselradius  = 0.0070;      	% blood vessel radius [cm]
@@ -169,11 +177,12 @@ zsurf = 0.0100;  % position of air/skin surface
             zd = z(iz) - zc;   	% vessel, z distance from vessel center                
             r  = sqrt(xd^2 + zd^2);	% r from vessel center
             if (r<=vesselradius)     	% if r is within vessel
-                T(:,ix,iz) = 3; % blood
+                T((qy-rad):(qy+rad),ix,iz) = 3; % blood
             end
 
     end %ix
     
+
     
      % blood vessel2 @ xc2, zc2, radius2, oriented along y axis
     xc2      = .015;            % [cm], center of blood vessel
@@ -184,10 +193,17 @@ zsurf = 0.0100;  % position of air/skin surface
             zd2 = z(iz) - zc2;   	% vessel, z distance from vessel center                
             r2  = sqrt(xd2^2 + zd2^2);	% r from vessel center
             if (r2<=vesselradius2)     	% if r is within vessel
-                T(:,ix2,iz) = 7; % grey matter
+                T((qy-rad):(qy+rad),ix,iz) = 7; % grey matter
             end
 
     end %ix
+
+
+
+    if(iz>Nz/1.2)
+        T(:,:,iz) = 2;
+    end
+    
     
     % air surface environment
     if iz<=round(zsurf/dz)
@@ -197,12 +213,12 @@ zsurf = 0.0100;  % position of air/skin surface
  end % iz
 
 %%%%%%%%%%%%%%%%  Surrounding  %%%%%%%%%%%%%%%%%%%%%%%%
- for sz2=1:Nz % for every depth z(iz) surrounding
-              % sutrrounding environment with air
-         T(1:10,1:10,sz2) = 1;
-         T(sz2,round(Ny/5):Ny,sz2) = 1; 
- end  %  sz2
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  for sz2=1:Nz % for every depth z(iz) surrounding
+%               % sutrrounding environment with air
+%          T(1:20,1:20,sz2) = 1;
+%          T(Nx-10:end,Ny-10:end,sz2) = 1; 
+%  end  %  sz2
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%
 if SAVEON
@@ -269,7 +285,6 @@ if SAVEON
     toc
 end % SAVEON
 
-
 %% Look at structure of Tzx at iy=Ny/2
 Txzy = shiftdim(T,1);   % Tyxz --> Txzy
 Tzx  = Txzy(:,:,round(Ny/2))'; % Tzx
@@ -288,7 +303,28 @@ colormap(cmap)
 set(colorbar,'fontsize',1)
 % label colorbar
 zdiff = zmax-zmin;
-%%%
+
+%% Look at structure of Tzx at iy=Ny/2
+Tyzx = shiftdim(T,2);   % Tyxz --> Tyzx
+Tyz  = Tyzx(:,:,round(Nx/2))'; % Tyz
+Tzy = shiftdim(Tyz,1);
+
+%%
+figure(7); clf
+sz = 12;  fz = 10; 
+imagesc(y,z,Tzy,[1 Nt])
+hold on
+set(gca,'fontsize',sz)
+xlabel('y [cm]')
+ylabel('z [cm]')
+colorbar
+cmap = makecmap(Nt);
+colormap(cmap)
+set(colorbar,'fontsize',1)
+% label colorbar
+zdiff = zmax-zmin;
+
+
 
 for i=1:Nt
     yy = (Nt-i)/(Nt-1)*Nz*dz;

@@ -370,7 +370,7 @@ int main(int argc, const char * argv[]) {
 	printf("------------- Begin Monte Carlo -------------\n");
 
     printf("%s\n",myname);
-    printf("requesting %0.1f min\n",time_min);
+  //  printf("requesting %0.1f min\n",time_min);
 	
 	Nphotons = iPh; // will be updated to achieve desired run time, time_min.
 
@@ -526,6 +526,7 @@ double RandomGen(char Type, long Seed, long *Status) {
 
 
 void run() {
+
 	do {
 		/**** LAUNCH
 		 Initialize photon position and trajectory.
@@ -533,12 +534,13 @@ void run() {
 		 //if (fmod(i_photon,10)==0) printf("photon %ld took %d steps\n",i_photon,CNT);
 		
 		i_photon += 1;				/* increment photon count */
+	//	printf("Shot photon %d\n", i_photon);
 		W = 1.0;                    /* set photon weight to one */
 		photon_status = ALIVE;      /* Launch an ALIVE photon */
 		CNT = 0;
 
 		// Print out message about progress.
-			if (i_photon % 100 == 0) {
+			if (i_photon % 1000 == 0) {
 				printf("progress %0.1f\n", 100 * i_photon / Nphotons);
 			}
 		

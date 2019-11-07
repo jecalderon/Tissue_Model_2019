@@ -123,9 +123,9 @@ xdiff = xmax-xmin;
 
 
 % Create 3 D model os tissue scattering of cluence rate%
-[Xii,Yii,Zii] = ndgrid(1:size(T,1) , 1:size(T ,2) , 1:size(T,3));
-pointsize = 10;
-figure(10);scatter3(Yii(:) , Zii(:) , Xii(:), pointsize , log10(F(:)) );  
+% [Xii,Yii,Zii] = ndgrid(1:size(T,1) , 1:size(T ,2) , 1:size(T,3));
+% pointsize = 10;
+% figure(10);scatter3(Yii(:) , Zii(:) , Xii(:), pointsize , log10(F(:)) );  
 
 %figure (11); surf(Yii , Xii , Zii);
 %% Look at structure, Tzx
