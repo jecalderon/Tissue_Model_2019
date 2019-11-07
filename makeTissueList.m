@@ -138,7 +138,7 @@ tissue(j).g     = 0.90;
 
 j=10;
 tissue(j).name  = 'PDMS';
-tissue(j).mua   = .1;
+tissue(j).mua   = .3;
 tissue(j).mus   = 80;
 tissue(j).g     = 0.50;
 

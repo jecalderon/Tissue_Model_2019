@@ -170,8 +170,8 @@ zsurf = 0.0100;  % position of air/skin surface
  %%   
     %blood vessel @ xc, zc, radius, oriented along y axis
     xc      = 0;            % [cm], center of blood vessel
-    zc      = Nz/1.5*dz;     	% [cm], center of blood vessel
-    vesselradius  = 0.0070;      	% blood vessel radius [cm]
+    zc      = 0.08;              % Nz/1.5*dz;     	% [cm], center of blood vessel
+    vesselradius  = 0.0030;      	% blood vessel radius [cm]
     for ix=1:Nx
             xd = x(ix) - xc;	% vessel, x distance from vessel center
             zd = z(iz) - zc;   	% vessel, z distance from vessel center                
