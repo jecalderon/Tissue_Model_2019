@@ -40,13 +40,14 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
 time_min    = 20;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
 nm          = 602;   	% desired wavelength of simulation
-Nbins       = 250;    	% # of bins in each dimension of cube Original code Nbins=200
+Nbins       = 150;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
 dermisT     = 0.0060;      %  Thickness of dermis
 epiT     = 0.0010;      %  Thickness of dermis
 ringT       = 0.30;        % Thinkness of the source ring
 eRadius     = .300;      % Ellipse xi
-initPhotons = 600000;     %Initial number of photons
+initPhotons = 10000;     %Initial number of photons
+samRatio    = 3.0;      % Ratio of the sample dimensiont like radius to the cube
 
 
 % Set Monte Carlo launch flags
@@ -125,6 +126,7 @@ xmax = max(x);
 rT   = ringT;
 xi   = eRadius;
 iPh  = initPhotons;
+sRad = samRatio;   %sample radius
 
 if isinf(zfocus), zfocus = 1e12; end
 
@@ -138,7 +140,7 @@ if isinf(zfocus), zfocus = 1e12; end
 
 T = double(zeros(Ny,Nx,Nz)); 
 
-T = T + 1;      % fill background with skin (dermis)
+T = T + 1;      % fill background with Air
 
 zsurf = 0.0100;  % position of air/skin surface
 
@@ -163,45 +165,45 @@ zsurf = 0.0100;  % position of air/skin surface
 %% Make a cube of PDMS that will contain all the tissues , rest is air
     qx = Nx/2;
     qy = Ny/2;
-    rad = 70;
+    rad = Nx/samRatio;
     if(iz <= Nz/1.2 && iz >= Nz/2)
         T((qy-rad):(qy+rad),(qx-rad):(qx+rad),iz) = 10;
     end
  %%   
-    %blood vessel @ xc, zc, radius, oriented along y axis
-    xc      = 0;            % [cm], center of blood vessel
-    zc      = 0.067;              % Nz/1.5*dz;     	% [cm], center of blood vessel
-    vesselradius  = 0.0030;      	% blood vessel radius [cm]
-    for ix=1:Nx
-            xd = x(ix) - xc;	% vessel, x distance from vessel center
-            zd = z(iz) - zc;   	% vessel, z distance from vessel center                
-            r  = sqrt(xd^2 + zd^2);	% r from vessel center
-            if (r<=vesselradius)     	% if r is within vessel
-                T((qy-rad):(qy+rad),ix,iz) = 3; % blood
-            end
+%     %blood vessel @ xc, zc, radius, oriented along y axis
+%     xc      = 0;            % [cm], center of blood vessel
+%     zc      = 0.08;              % Nz/1.5*dz;     	% [cm], center of blood vessel
+%     vesselradius  = 0.0030;      	% blood vessel radius [cm]
+%     for ix=1:Nx
+%             xd = x(ix) - xc;	% vessel, x distance from vessel center
+%             zd = z(iz) - zc;   	% vessel, z distance from vessel center                
+%             r  = sqrt(xd^2 + zd^2);	% r from vessel center
+%             if (r<=vesselradius)     	% if r is within vessel
+%                 T((qy-rad):(qy+rad),ix,iz) = 3; % blood
+%             end
+% 
+%     end %ix
+%     
 
-    end %ix
-    
-
-    
-     % blood vessel2 @ xc2, zc2, radius2, oriented along y axis
-    xc2      = .015;            % [cm], center of blood vessel
-    zc2      = Nz/1.5*dz;     	% [cm], center of blood vessel
-    vesselradius2  = 0.0020;      	% blood vessel radius [cm]
-    for ix2=1:Nx
-            xd2 = x(ix2) - xc2;	% vessel, x distance from vessel center
-            zd2 = z(iz) - zc2;   	% vessel, z distance from vessel center                
-            r2  = sqrt(xd2^2 + zd2^2);	% r from vessel center
-            if (r2<=vesselradius2)     	% if r is within vessel
-                T((qy-rad):(qy+rad),ix,iz) = 7; % grey matter
-            end
-
-    end %ix
+%     
+%      % blood vessel2 @ xc2, zc2, radius2, oriented along y axis
+%     xc2      = .015;            % [cm], center of blood vessel
+%     zc2      = Nz/1.5*dz;     	% [cm], center of blood vessel
+%     vesselradius2  = 0.0020;      	% blood vessel radius [cm]
+%     for ix2=1:Nx
+%             xd2 = x(ix2) - xc2;	% vessel, x distance from vessel center
+%             zd2 = z(iz) - zc2;   	% vessel, z distance from vessel center                
+%             r2  = sqrt(xd2^2 + zd2^2);	% r from vessel center
+%             if (r2<=vesselradius2)     	% if r is within vessel
+%                 T((qy-rad):(qy+rad),ix,iz) = 7; % grey matter
+%             end
+% 
+%     end %ix
 
 
-
+%%Bottom of the sample resting place
     if(iz>Nz/1.2)
-        T(:,:,iz) = 2;
+        T(:,:,iz) = 5;
     end
     
     
