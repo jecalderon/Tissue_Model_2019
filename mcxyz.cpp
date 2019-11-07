@@ -379,8 +379,12 @@ int main(int argc, const char * argv[]) {
 
 	CNT = 0;
 
-	for (int i = 0; i < reps; i++, radius += step) {
+
+	for (int i = 0; i < reps; i++, radius += step, xi += step) {
+		printf("On iteration %d\n", i + 1);
 		run();
+	//	Nphotons *= 1.2;
+		
 	}
 	
 
@@ -541,7 +545,7 @@ void run() {
 
 		// Print out message about progress.
 			if (i_photon % 1000 == 0) {
-				printf("progress %0.1f\n", 100 * i_photon / Nphotons);
+				printf("progress %0.1f\n", 100 * i_photon / (Nphotons));
 			}
 		
 

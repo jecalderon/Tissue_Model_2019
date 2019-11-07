@@ -40,18 +40,16 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
 time_min    = 20;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
 nm          = 602;   	% desired wavelength of simulation
-Nbins       = 150;    	% # of bins in each dimension of cube Original code Nbins=200
-binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
-dermisT     = 0.0060;      %  Thickness of dermis
-epiT     = 0.0010;      %  Thickness of dermis
-ringT       = 0.30;        % Thinkness of the source ring
-eRadius     = .300;      % Ellipse xi
-initPhotons = 10000;     %Initial number of photons
-samRatio    = 3.0;      % Ratio of the sample dimensiont like radius to the cube
+Nbins       = 450;    	% # of bins in each dimension of cube Original code Nbins=200
+binsize     = 0.0025; 	% size of each bin, eg. [cm] or [mm]
+dermisT     = 0.0060;   %  Thickness of dermis
+epiT        = 0.0010;   %  Thickness of dermis
+initPhotons = 300000;   %Initial number of photons
+samRatio    = 3.0;     % Ratio of the sample dimension like radius to the cube
 
 
 % Set Monte Carlo launch flags
-mcflag      = 0;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
+mcflag      = 6;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
                         % 3 = rectangular beam (use xfocus,yfocus for x,y halfwidths)
 launchflag  = 0;        % 0 = let mcxyz.c calculate launch trajectory
                         % 1 = manually set launch vector.
@@ -62,16 +60,18 @@ boundaryflag = 1;       % 0 = no boundaries, 1 = escape at boundaries
 % Sets position of source
 xs          = 0;      	% x of source
 ys          = 0;        % y of source
-zs          = 0;  	% z of source
+zs          = 0;        % z of source
 
 % Set position of focus, so mcxyz can calculate launch trajectory
 xfocus      = 0;        % set x,position of focus
 yfocus      = 0;        % set y,position of focus
 zfocus      = inf;    	% set z,position of focus (=inf for collimated beam)
 
-% only used if mcflag == 0 or 1 or 3 (not 2=isotropic pt.)
-radius      = .002;   % 1/e radius of beam at tissue surface
+% only used if mcflag == 0 or 1 or 3,6,7 (not 2=isotropic pt.)
+radius      = 1.0;   % 1/e radius of beam at tissue surface
 waist       = 0.00300;  	% 1/e radius of beam at focus
+ringT       = .0000020;    % Thinkness of the source ring
+eRadius     = 0.600;   % Ellipse xi
 
 % only used if launchflag == 1 (manually set launch trajectory):
 ux0         = 0.7;      % trajectory projected onto x axis
@@ -80,10 +80,17 @@ uz0         = sqrt(1 - ux0^2 - uy0^2); % such that ux^2 + uy^2 + uz^2 = 1
 
 %flags for lines simulations mcflag = 4;
 
-lines   = 1; % number of lines
-xLine = -0.02; % location of first line
-step = 0.005; % distance from line to line
-lineWidth = 0.002; % thinkness of line 
+lines       = 2; % number of lines
+xLine       = -0.02; % location of first line
+step        = 0.5; % distance from line to line
+lineWidth	= 0.002; % thinkness of line 
+
+
+%dimensions of sample
+sampleLenght = 0.40;
+sampleHeight = 0.05;
+sampleDepth = 0.40;
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -98,9 +105,9 @@ Nt = length(tissue);
 
  % Initializing the optical parameter matrix
  % Jose E Calderon
-    muav = zeros(1, Nt);
-      musv = zeros(1, Nt);
-        gv = zeros(1, Nt);
+    muav	= zeros(1, Nt);
+    musv	= zeros(1, Nt);
+    gv      = zeros(1, Nt);
         
 for i=1:Nt
     muav(i)  = tissue(i).mua;
@@ -142,7 +149,7 @@ T = double(zeros(Ny,Nx,Nz));
 
 T = T + 1;      % fill background with Air
 
-zsurf = 0.0100;  % position of air/skin surface
+zsurf = 0;%0.100;  % position of air/skin surface
 
  for iz=1:Nz % for every depth z(iz)
  
@@ -165,51 +172,55 @@ zsurf = 0.0100;  % position of air/skin surface
 %% Make a cube of PDMS that will contain all the tissues , rest is air
     qx = Nx/2;
     qy = Ny/2;
-    rad = Nx/samRatio;
-    if(iz <= Nz/1.2 && iz >= Nz/2)
-        T((qy-rad):(qy+rad),(qx-rad):(qx+rad),iz) = 10;
+    startBin =Nz/1.105;
+    sD = (sampleDepth/dy)/2;
+    sL = (sampleLenght/dx)/2;
+    if(iz <= startBin && iz >= startBin - (sampleHeight/dz))
+    T(round(qy-sD):round(qy+sD),round(qx-sL):round(qx+sL),iz) = 10;
     end
- %%   
-%     %blood vessel @ xc, zc, radius, oriented along y axis
-%     xc      = 0;            % [cm], center of blood vessel
-%     zc      = 0.08;              % Nz/1.5*dz;     	% [cm], center of blood vessel
-%     vesselradius  = 0.0030;      	% blood vessel radius [cm]
-%     for ix=1:Nx
-%             xd = x(ix) - xc;	% vessel, x distance from vessel center
-%             zd = z(iz) - zc;   	% vessel, z distance from vessel center                
-%             r  = sqrt(xd^2 + zd^2);	% r from vessel center
-%             if (r<=vesselradius)     	% if r is within vessel
-%                 T((qy-rad):(qy+rad),ix,iz) = 3; % blood
-%             end
-% 
-%     end %ix
-%     
+    
+%%
+    %blood vessel @ xc, zc, radius, oriented along y axis
+    xc      = Nx/(2*dx);            % [cm], center of blood vessel
+    zc      = Nz/(2*dz);              % Nz/1.5*dz;     	% [cm], center of blood vessel
+    vesselradius  = 0.40;      	% blood vessel radius [cm]
+    for ix=1:Nx
+            xd = x(ix) - xc;	% vessel, x distance from vessel center
+            zd = z(iz) - zc;   	% vessel, z distance from vessel center                
+            r  = sqrt(xd^2 + zd^2);	% r from vessel center
+            if (r <= vesselradius)     	% if r is within vessel
+                T((qy-sD):(qy+sD),ix,iz) = 3; % blood
+            end
 
-%     
-%      % blood vessel2 @ xc2, zc2, radius2, oriented along y axis
-%     xc2      = .015;            % [cm], center of blood vessel
-%     zc2      = Nz/1.5*dz;     	% [cm], center of blood vessel
-%     vesselradius2  = 0.0020;      	% blood vessel radius [cm]
-%     for ix2=1:Nx
-%             xd2 = x(ix2) - xc2;	% vessel, x distance from vessel center
-%             zd2 = z(iz) - zc2;   	% vessel, z distance from vessel center                
-%             r2  = sqrt(xd2^2 + zd2^2);	% r from vessel center
-%             if (r2<=vesselradius2)     	% if r is within vessel
-%                 T((qy-rad):(qy+rad),ix,iz) = 7; % grey matter
-%             end
-% 
-%     end %ix
+    end %ix
+    
+
+    
+     % blood vessel2 @ xc2, zc2, radius2, oriented along y axis
+    xc2      =-3;            % [cm], center of blood vessel
+    zc2      = Nz/1.5*dz;     	% [cm], center of blood vessel
+    vesselradius2  = 10;      	% blood vessel radius [cm]
+    for ix2=1:Nx
+            xd2 = x(ix2) - xc2;	% vessel, x distance from vessel center
+            zd2 = z(iz) - zc2;   	% vessel, z distance from vessel center                
+            r2  = sqrt(xd2^2 + zd2^2);	% r from vessel center
+            if (r2<=vesselradius2)     	% if r is within vessel
+                T((qy-sD):(qy+sD),ix,iz) = 10; % grey matter
+            end
+
+    end %ix
+
 
 
 %%Bottom of the sample resting place
-    if(iz>Nz/1.2)
-        T(:,:,iz) = 5;
+    if(iz>Nz/1.105)
+        T(:,:,iz) = 11;
     end
     
     
     % air surface environment
     if iz<=round(zsurf/dz)
-        T(:,:,iz) = 1; 
+        T(:,:,iz) = 2; 
     end
     
  end % iz

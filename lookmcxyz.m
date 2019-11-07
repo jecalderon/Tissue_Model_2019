@@ -120,19 +120,17 @@ xmin = min(x);
 xmax = max(x);
 xdiff = xmax-xmin;
 
-
-
-% Create 3 D model os tissue scattering of cluence rate%
+% 
+% 
+% %%%%%%%%Create 3 D model os tissue scattering of cluence rate%%%%
 % [Xii,Yii,Zii] = ndgrid(1:size(T,1) , 1:size(T ,2) , 1:size(T,3));
 % pointsize = 10;
 % figure(10);scatter3(Yii(:) , Zii(:) , Xii(:), pointsize , log10(F(:)) );  
 
-%figure (11); surf(Yii , Xii , Zii);
-%% Look at structure, Tzx
+% Look at structure, Tzx
 Tzx = reshape(T(round(Ny/2),:,:),Nx,Nz)';
 tissue = makeTissueList(nm);
 Nt = length(tissue);
-
 figure(1);clf
 imagesc(x(ux),z(uz),Tzx(uz,ux),[1 Nt])
 hold on
@@ -184,12 +182,12 @@ switch mcflag
             plot([xx xx],[zs zz],'r-')
         end
         
-    case 6 % Elliptical
+    case 6 % Elliptical ring
         for i=0:N
             plot((-radius + 2*radius*i/N)*[1 1],[zs max(z)],'r-')
         end
     
-    case 7 % Elliptical
+    case 7 % Elliptical fluence
         for i=0:N
             plot((-radius + 2*radius*i/N)*[1 1],[zs max(z)],'r-')
         end   
@@ -282,7 +280,7 @@ end
 
 %% look Azx
 Fzx = reshape(F(round(Ny/2),:,:),Nx,Nz)'; % in z,x plane through source
-mua = muav(reshape(T(35,:,:),Nx,Nz)');
+mua = muav(reshape(T(Ny/2,:,:),Nx,Nz)');
 Azx = Fzx.*mua;
 
 figure(4);clf
@@ -310,7 +308,7 @@ end
 %% look Fyx at Tissue Half way 
 % To illustrate the x-y cross section inside the tissue%%%
 %%%Jose E Calderon  %%%%%%%%%%%%%%%%%%%%%%%%
-Fyx = reshape(F(:,:,round(Nz/2)),Nx,Ny)';
+Fyx = reshape(F(:,:,round(Nz/5)),Nx,Ny)';
 disp(Nz/2);
 ix = round((dx*Nx/2 + 0.15)/dx);
 iy = round(ys/dy);
@@ -333,6 +331,15 @@ text(min(z)-0.2*max(z),min(y)-0.08*max(y),sprintf('runtime = %0.1f min',time_min
 
 if SAVEPICSON
     name = sprintf('%s_Fyx.jpg',myname);
+    savepic(3,[4 3],name)
+end
+ 
+% %%%%%%%%Create 3 D model os tissue scattering of cluence rate%%%%
+%  [Xii,Yii,Zii] = ndgrid(1:size(T,1) , 1:size(T ,2) , 1:size(T,3));
+%  pointsize = 10;
+%  figure('3D image',10);scatter3(Yii(:) , Zii(:) , Xii(:), pointsize , log10(F(:)) );  
+if SAVEPICSON
+    name = sprintf('%3d_cube.jpg',myname);
     savepic(3,[4 3],name)
 end
 

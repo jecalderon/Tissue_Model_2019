@@ -21,5 +21,6 @@ for i=1:64
     elseif  j<=8-dj, cmap(i,:) = [1 1 .9]; % white matter
     elseif  j<=9-dj, cmap(i,:) = [1 .5 .5]; % standard tissue
     elseif  j<=10-dj, cmap(i,:) = [1 1 f3]; % PDMS tissue
+    elseif  j<=11-dj, cmap(i,:) = [.2 .2 .5]; % Highly Absorbing floor
     end
 end
