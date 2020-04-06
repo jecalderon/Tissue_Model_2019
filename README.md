@@ -9,6 +9,6 @@
 <div>&nbsp;</div>
 <div><span style="background-color: #ffffff;">August 7. 2019</span><span style="background-color: #ffffff;"><br />Debugged by additional collaborator, Oghenefejiro Theodore Abohweyere of Durham College, Canada. email: oghenefejiro.abohweyere@dcmail.ca, rulecoconuts@gmail.com<br />Fix by Oghenefejiro: added an if statement to handle absence of arguments by setting variable 'myname' to "skinvessel" by default.</span></div>
 <div>&nbsp;</div>
-<div><span style="background-color: #ffffff;">Sept 27. 2019<br />Debugged by additional collaborator, Jose E Calderon. email: jose.calderon@upr.edu<br />Modified by JOse E. Caldeorn: Added case 5 for a Spatial Frequency Domain structural irradiance with a source remote in air. </span></div>
+<div><span style="background-color: #ffffff;">Sept 27. 2019<br />Debugged by additional collaborator, Jose E Calderon. email: jose.calderon@upr.edu<br />Modified by Joe E. Caldeton: Added case 5 for a Spatial Frequency Domain structural irradiance with a source remote in air. </span></div>
 <div>&nbsp;</div>
 <div><span style="background-color: #ffffff;">October 2, 2019<br />Fix Matlab LookMC code to see image in surface</span></div>
