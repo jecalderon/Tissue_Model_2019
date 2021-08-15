@@ -38,24 +38,30 @@ SAVEON      = 1;        % 1 = save myname_T.bin, myname_H.mci
                         % 0 = don't save. Just check the program.
 
 myname      = 'skinvessel';% name for files: myname_T.bin, myname_H.mci  
-time_min    = 10;      	% time duration of the simulation [min] <----- run time -----
-nm          = 532;   	% desired wavelength of simulation
-Nbins       = 200;    	% # of bins in each dimension of cube 
+time_min    = 20;      	% time duration of the simulation [min] <----- run time -Original time_min=10----
+nm          = 602;   	% desired wavelength of simulation
+Nbins       = 250;    	% # of bins in each dimension of cube Original code Nbins=200
 binsize     = 0.0005; 	% size of each bin, eg. [cm] or [mm]
+dermisT     = 0.0060;      %  Thickness of dermis
+epiT     = 0.0010;      %  Thickness of dermis
+ringT       = 0.30;        % Thinkness of the source ring
+eRadius     = .300;      % Ellipse xi
+initPhotons = 600000;     %Initial number of photons
+
 
 % Set Monte Carlo launch flags
 mcflag      = 0;     	% launch: 0 = uniform beam, 1 = Gaussian, 2 = isotropic pt. 
                         % 3 = rectangular beam (use xfocus,yfocus for x,y halfwidths)
 launchflag  = 0;        % 0 = let mcxyz.c calculate launch trajectory
                         % 1 = manually set launch vector.
-boundaryflag = 2;       % 0 = no boundaries, 1 = escape at boundaries
+boundaryflag = 1;       % 0 = no boundaries, 1 = escape at boundaries
                         % 2 = escape at surface only. No x, y, bottom z
                         % boundaries
 
 % Sets position of source
 xs          = 0;      	% x of source
 ys          = 0;        % y of source
-zs          = 0.0101;  	% z of source
+zs          = 0;  	% z of source
 
 % Set position of focus, so mcxyz can calculate launch trajectory
 xfocus      = 0;        % set x,position of focus
@@ -63,13 +69,21 @@ yfocus      = 0;        % set y,position of focus
 zfocus      = inf;    	% set z,position of focus (=inf for collimated beam)
 
 % only used if mcflag == 0 or 1 or 3 (not 2=isotropic pt.)
-radius      = 0.0300;   % 1/e radius of beam at tissue surface
-waist       = 0.0300;  	% 1/e radius of beam at focus
+radius      = .002;   % 1/e radius of beam at tissue surface
+waist       = 0.00300;  	% 1/e radius of beam at focus
 
 % only used if launchflag == 1 (manually set launch trajectory):
 ux0         = 0.7;      % trajectory projected onto x axis
 uy0         = 0.4;      % trajectory projected onto y axis
 uz0         = sqrt(1 - ux0^2 - uy0^2); % such that ux^2 + uy^2 + uz^2 = 1
+
+%flags for lines simulations mcflag = 4;
+
+lines   = 1; % number of lines
+xLine = -0.02; % location of first line
+step = 0.005; % distance from line to line
+lineWidth = 0.002; % thinkness of line 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -80,10 +94,18 @@ uz0         = sqrt(1 - ux0^2 - uy0^2); % such that ux^2 + uy^2 + uz^2 = 1
 % Create tissue properties
 tissue = makeTissueList(nm); % also --> global tissue(1:Nt).s
 Nt = length(tissue);
+
+ % Initializing the optical parameter matrix
+ % Jose E Calderon
+    muav = zeros(1, Nt);
+      musv = zeros(1, Nt);
+        gv = zeros(1, Nt);
+        
 for i=1:Nt
     muav(i)  = tissue(i).mua;
     musv(i)  = tissue(i).mus;
     gv(i)    = tissue(i).g;
+    
 end
 
 % Specify Monte Carlo parameters    
@@ -100,6 +122,9 @@ zmin = min(z);
 zmax = max(z);
 xmin = min(x);
 xmax = max(x);
+rT   = ringT;
+xi   = eRadius;
+iPh  = initPhotons;
 
 if isinf(zfocus), zfocus = 1e12; end
 
@@ -113,38 +138,87 @@ if isinf(zfocus), zfocus = 1e12; end
 
 T = double(zeros(Ny,Nx,Nz)); 
 
-T = T + 4;      % fill background with skin (dermis)
+T = T + 1;      % fill background with skin (dermis)
 
 zsurf = 0.0100;  % position of air/skin surface
 
-for iz=1:Nz % for every depth z(iz)
+ for iz=1:Nz % for every depth z(iz)
+ 
+%     % air
+%     if iz<=round(zsurf/dz)
+%         T(:,:,iz) = 1; 
+%     end
 
-    % air
-    if iz<=round(zsurf/dz)
-        T(:,:,iz) = 2; 
+%     %epidermis (60 um thick)
+%     if iz>round(zsurf/dz) && iz<=round((zsurf+dermisT)/dz)
+%         T(:,:,iz) = 5; 
+%     end
+% 
+%        %epidermis (10 um thick  epit)
+%     if iz>round((zsurf+dermisT)/dz) && iz<=round((zsurf+dermisT+epiT)/dz)
+%         T(:,:,iz) = 4; 
+%     end
+
+
+%% Make a cube of PDMS that will contain all the tissues , rest is air
+    qx = Nx/2;
+    qy = Ny/2;
+    rad = 70;
+    if(iz <= Nz/1.2 && iz >= Nz/2)
+        T((qy-rad):(qy+rad),(qx-rad):(qx+rad),iz) = 10;
     end
-
-    % epidermis (60 um thick)
-    if iz>round(zsurf/dz) & iz<=round((zsurf+0.0060)/dz)
-        T(:,:,iz) = 5; 
-    end
-
-    % blood vessel @ xc, zc, radius, oriented along y axis
+ %%   
+    %blood vessel @ xc, zc, radius, oriented along y axis
     xc      = 0;            % [cm], center of blood vessel
-    zc      = Nz/2*dz;     	% [cm], center of blood vessel
-    vesselradius  = 0.0100;      	% blood vessel radius [cm]
+    zc      = 0.08;              % Nz/1.5*dz;     	% [cm], center of blood vessel
+    vesselradius  = 0.0030;      	% blood vessel radius [cm]
     for ix=1:Nx
             xd = x(ix) - xc;	% vessel, x distance from vessel center
             zd = z(iz) - zc;   	% vessel, z distance from vessel center                
             r  = sqrt(xd^2 + zd^2);	% r from vessel center
             if (r<=vesselradius)     	% if r is within vessel
-                T(:,ix,iz) = 3; % blood
+                T((qy-rad):(qy+rad),ix,iz) = 3; % blood
             end
 
     end %ix
     
-end % iz
 
+    
+     % blood vessel2 @ xc2, zc2, radius2, oriented along y axis
+    xc2      = .015;            % [cm], center of blood vessel
+    zc2      = Nz/1.5*dz;     	% [cm], center of blood vessel
+    vesselradius2  = 0.0020;      	% blood vessel radius [cm]
+    for ix2=1:Nx
+            xd2 = x(ix2) - xc2;	% vessel, x distance from vessel center
+            zd2 = z(iz) - zc2;   	% vessel, z distance from vessel center                
+            r2  = sqrt(xd2^2 + zd2^2);	% r from vessel center
+            if (r2<=vesselradius2)     	% if r is within vessel
+                T((qy-rad):(qy+rad),ix,iz) = 7; % grey matter
+            end
+
+    end %ix
+
+
+
+    if(iz>Nz/1.2)
+        T(:,:,iz) = 2;
+    end
+    
+    
+    % air surface environment
+    if iz<=round(zsurf/dz)
+        T(:,:,iz) = 1; 
+    end
+    
+ end % iz
+
+%%%%%%%%%%%%%%%%  Surrounding  %%%%%%%%%%%%%%%%%%%%%%%%
+%  for sz2=1:Nz % for every depth z(iz) surrounding
+%               % sutrrounding environment with air
+%          T(1:20,1:20,sz2) = 1;
+%          T(Nx-10:end,Ny-10:end,sz2) = 1; 
+%  end  %  sz2
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%
 if SAVEON
@@ -157,7 +231,7 @@ if SAVEON
     %   which contains the Monte Carlo simulation parameters
     %   and specifies the tissue optical properties for each tissue type.
     commandwindow
-    disp(sprintf('--------create %s --------',myname))
+    fprintf('--------create %s --------\n',myname)
     filename = sprintf('%s_H.mci',myname);
     fid = fopen(filename,'w');
         % run parameters
@@ -183,6 +257,11 @@ if SAVEON
         fprintf(fid,'%0.4f\n',uz0);
         fprintf(fid,'%0.4f\n',radius);
         fprintf(fid,'%0.4f\n',waist);
+        fprintf(fid,'%0.4f\n',nm);  % Adding the ligth source wave length
+        fprintf(fid,'%0.4f\n',rT);  % Adding the ring thinkness of source
+        fprintf(fid,'%0.4f\n',xi);  % Elliptical initial radius
+        fprintf(fid,'%0.4f\n',iPh);  % Initial number of Photons
+        
         % tissue optical properties
         fprintf(fid,'%d\n',Nt);
         for i=1:Nt
@@ -190,6 +269,10 @@ if SAVEON
             fprintf(fid,'%0.4f\n',musv(i));
             fprintf(fid,'%0.4f\n',gv(i));
         end
+        fprintf(fid,'%d\n',lines);
+        fprintf(fid,'%0.5f',xLine);
+        fprintf(fid,'%0.5f',step);
+        fprintf(fid,'%0.5f',lineWidth);
     fclose(fid);
 
     %% write myname_T.bin file
@@ -202,10 +285,9 @@ if SAVEON
     toc
 end % SAVEON
 
-
 %% Look at structure of Tzx at iy=Ny/2
 Txzy = shiftdim(T,1);   % Tyxz --> Txzy
-Tzx  = Txzy(:,:,Ny/2)'; % Tzx
+Tzx  = Txzy(:,:,round(Ny/2))'; % Tzx
 
 %%
 figure(1); clf
@@ -221,7 +303,28 @@ colormap(cmap)
 set(colorbar,'fontsize',1)
 % label colorbar
 zdiff = zmax-zmin;
-%%%
+
+%% Look at structure of Tzx at iy=Ny/2
+Tyzx = shiftdim(T,2);   % Tyxz --> Tyzx
+Tyz  = Tyzx(:,:,round(Nx/2))'; % Tyz
+Tzy = shiftdim(Tyz,1);
+
+%%
+figure(7); clf
+sz = 12;  fz = 10; 
+imagesc(y,z,Tzy,[1 Nt])
+hold on
+set(gca,'fontsize',sz)
+xlabel('y [cm]')
+ylabel('z [cm]')
+colorbar
+cmap = makecmap(Nt);
+colormap(cmap)
+set(colorbar,'fontsize',1)
+% label colorbar
+zdiff = zmax-zmin;
+
+
 
 for i=1:Nt
     yy = (Nt-i)/(Nt-1)*Nz*dz;
@@ -259,6 +362,12 @@ switch mcflag
             xx = -radius + 2*radius*i/20;
             plot([xx xx],[zs zz],'r-')
         end
+        
+   case 6 % uniform elliptical
+        for i=0:N
+            plot((-radius + 2*radius*i/N)*[1 1],[zs max(z)],'r-')
+        end
+
 end
 
 disp('done')
