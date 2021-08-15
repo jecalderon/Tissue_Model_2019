@@ -2,6 +2,7 @@ function reportHmci(myname)
 % function reportHmci(myname)
 %   Lists the values of the input file  myname_H.mci.
 %   Updated Feb 8, 2017. slj, adding boundaryflag B(10) (see s(10).s)
+%   Updated Nov 5, 2019. nm  pass down the source wave length Jose E Calderon)
 
 home
 fid = fopen(sprintf('%s_H.mci',myname),'r');
@@ -29,13 +30,17 @@ s(18).s = 'uy0';
 s(19).s = 'uz0';
 s(20).s = 'radius';
 s(21).s = 'waist';
-s(22).s = 'Nt';
+s(22).s = 'nm';
+s(23).s = 'rT';
+s(24).s = 'xi';
+s(25).s = 'xi';
+s(26).s = 'Nt';
 
-for i=1:22
+for i=1:26
     disp(sprintf('%d\t%10s = %0.4f',i,s(i).s,B(i)))
 end
 
-for j=1:B(22)
+for j=1:B(26)
     i=i+1;
     disp(sprintf('---'))
     disp(sprintf('%d\tmua = %0.4f',i,B(i)))

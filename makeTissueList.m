@@ -136,6 +136,30 @@ tissue(j).mua   = 1;
 tissue(j).mus   = 100;
 tissue(j).g     = 0.90;
 
+j=10;
+tissue(j).name  = 'PDMS';
+tissue(j).mua   = 3;
+tissue(j).mus   = 80;
+tissue(j).g     = 0.50;
+
+%%%5 Added by Jose Enrique Calderon . Simulation of higly absorbgn floor
+j=11;
+tissue(j).name = 'high absorber';
+B = 0.01;
+S = 0.75;
+W = 0.75;
+M = 0;
+musp500 = 20;
+fray    = 0.2;
+bmie    = 1.0;
+gg      = 0.95;
+musp = musp500*(fray*(nm/500).^-4 + (1-fray)*(nm/500).^-bmie);
+X = [B*S B*(1-S) W M]';
+tissue(j).mua = MU*X;
+tissue(j).mus = musp/(1-gg);
+tissue(j).g   = gg;
+
+
 disp(sprintf('---- tissueList ------ \tmua   \tmus  \tg  \tmusp'))
 for i=1:length(tissue)
     disp(sprintf('%d\t%15s\t%0.4f\t%0.1f\t%0.3f\t%0.1f',...
