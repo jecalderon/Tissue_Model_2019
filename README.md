@@ -5,3 +5,5 @@ This project here allows for fast installation into Visual Studio 2017 and Visua
 Debugged by additional collaborator, Oghenefejiro Theodore Abohweyere of Durham College, Canada. email: oghenefejiro.abohweyere@dcmail.ca, rulecoconuts@gmail.com
 
 Fix by Oghenefejiro: added an if statement to handle absence of arguments by setting variable 'myname' to a default value.
+
+Check: Pushes can be made from Oghenefejiro Theo branch
