@@ -12,3 +12,4 @@
 <div><span style="background-color: #ffffff;">Sept 27. 2019<br />Debugged by additional collaborator, Jose E Calderon. email: jose.calderon@upr.edu<br />Modified by Joe E. Caldeton: Added case 5 for a Spatial Frequency Domain structural irradiance with a source remote in air. </span></div>
 <div>&nbsp;</div>
 <div><span style="background-color: #ffffff;">October 2, 2019<br />Fix Matlab LookMC code to see image in surface</span></div>
+<div><span style="background-color: #ffffff;">Check: Pushes can be made from Oghenefejiro Theo branch</span></div>
