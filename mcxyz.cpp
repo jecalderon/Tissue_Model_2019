@@ -44,6 +44,11 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define cpp_time
+#ifdef cpp_time
+	#include<chrono>
+#endif
+
 #define Ntiss		19          /* Number of tissue types. */
 #define STRLEN 		32          /* String length. */
 #define ls          1.0E-7      /* Moving photon a little bit off the voxel face */
@@ -355,6 +360,11 @@ int main(int argc, const char * argv[]) {
 	/**************************
 	 * ============================ MAJOR CYCLE ========================
 	 **********/
+	
+#ifdef  cpp_time
+	auto begin_time = std::chrono::high_resolution_clock::now();
+#endif //  cpp_time
+
 	start_time = clock();
 	now = time(NULL);
 	printf("%s\n", ctime(&now));
@@ -390,6 +400,15 @@ int main(int argc, const char * argv[]) {
 
 	printf("------------------------------------------------------\n");
 	finish_time = clock();
+
+#ifdef cpp_time
+	std::chrono::duration<float> elapsed_time=std::chrono::high_resolution_clock::now()- begin_time;
+	printf("\n---------------C++ TIME----------------\n");
+	printf("Elapsed Time for %0.3e photons = %5.3f min\n",Nphotons,elapsed_time.count()/60.0);
+	printf("%0.2e photons per minute\n", Nphotons / (elapsed_time.count() / 60.0));
+	printf("-----------------------------------------\n\n");
+#endif
+
 	time_min = (double)(finish_time - start_time) / CLOCKS_PER_SEC / 60;
 	printf("Elapsed Time for %0.3e photons = %5.3f min\n", Nphotons, time_min);
 	printf("%0.2e photons per minute\n", Nphotons / time_min);
