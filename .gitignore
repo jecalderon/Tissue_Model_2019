@@ -259,3 +259,9 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/skinvessel-89_T.bin
+/skinvesselY_T.bin
+*.mci
+*.bin
+skinvessel_F.bin
+*.bin
