@@ -262,3 +262,5 @@ __pycache__/
 /skinvessel-89_T.bin
 /skinvesselY_T.bin
 *.mci
+*.bin
+skinvessel_F.bin
